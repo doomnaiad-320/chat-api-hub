@@ -1,0 +1,50 @@
+version: '3'
+services:
+  chat-api:
+    image: ai365/chat-api:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai
+      - SQL_DSN=chatapi:chatapi123123@tcp(mysql:3306)/chatapi
+      - REDIS_CONN_STRING=redis://redis
+      - SYNC_FREQUENCY=60
+      - SESSION_SECRET=LKh1D13HJsfKHD  # 修改为随机字符串
+    volumes:
+      - /data/chat-api:/data
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - default
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - /data/mysql/data:/var/lib/mysql
+      - /data/mysql/conf:/etc/mysql/conf.d
+      - /data/mysql/init:/docker-entrypoint-initdb.d
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=chatapiroot
+      - MYSQL_DATABASE=chatapi
+      - MYSQL_USER=chatapi
+      - MYSQL_PASSWORD=chatapi123123
+    networks:
+      - default 
+
+  redis:
+    image: redis:latest
+    restart: always
+    volumes:
+      - /data/redis/data:/data
+      - /data/redis/redis.conf:/usr/local/etc/redis/redis.conf 
+      - /etc/localtime:/etc/localtime:ro
+    command: redis-server /usr/local/etc/redis/redis.conf 
+    networks:
+      - default 
+
+networks:
+  default: 
