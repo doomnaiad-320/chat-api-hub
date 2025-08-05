@@ -7,44 +7,48 @@ services:
       - "3000:3000"
     environment:
       - TZ=Asia/Shanghai
-      - SQL_DSN=chatapi:chatapi123123@tcp(mysql:3306)/chatapi
+      # 使用外部MySQL数据库
+      - SQL_DSN=chatapihub:XdxpZsD6P2TSWTAx@tcp(1.92.83.101:3306)/chatapihub?parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci
+      # Redis配置（可选，如果不需要可以注释掉下面两行）
       - REDIS_CONN_STRING=redis://redis
       - SYNC_FREQUENCY=60
-      - SESSION_SECRET=LKh1D13HJsfKHD  # 修改为随机字符串
+      - SESSION_SECRET=chatapi_session_secret_2024  # 修改为随机字符串
+      - DEBUG=false
+      - GIN_MODE=release
     volumes:
       - /data/chat-api:/data
     depends_on:
       - redis
-      - mysql
     networks:
       - default
 
-  mysql:
-    image: mysql:8.0
-    volumes:
-      - /data/mysql/data:/var/lib/mysql
-      - /data/mysql/conf:/etc/mysql/conf.d
-      - /data/mysql/init:/docker-entrypoint-initdb.d
-      - /etc/localtime:/etc/localtime:ro
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=chatapiroot
-      - MYSQL_DATABASE=chatapi
-      - MYSQL_USER=chatapi
-      - MYSQL_PASSWORD=chatapi123123
-    networks:
-      - default 
+  # 注释掉本地MySQL服务，因为我们使用外部数据库
+  # mysql:
+  #   image: mysql:8.0
+  #   volumes:
+  #     - /data/mysql/data:/var/lib/mysql
+  #     - /data/mysql/conf:/etc/mysql/conf.d
+  #     - /data/mysql/init:/docker-entrypoint-initdb.d
+  #     - /etc/localtime:/etc/localtime:ro
+  #   restart: always
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=chatapiroot
+  #     - MYSQL_DATABASE=chatapi
+  #     - MYSQL_USER=chatapi
+  #     - MYSQL_PASSWORD=chatapi123123
+  #   networks:
+  #     - default
 
   redis:
     image: redis:latest
     restart: always
     volumes:
       - /data/redis/data:/data
-      - /data/redis/redis.conf:/usr/local/etc/redis/redis.conf 
+      - /data/redis/redis.conf:/usr/local/etc/redis/redis.conf
       - /etc/localtime:/etc/localtime:ro
-    command: redis-server /usr/local/etc/redis/redis.conf 
+    command: redis-server /usr/local/etc/redis/redis.conf
     networks:
-      - default 
+      - default
 
 networks:
-  default: 
+  default:

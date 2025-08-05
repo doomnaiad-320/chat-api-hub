@@ -1,0 +1,27 @@
+version: '3'
+services:
+  chat-api:
+    image: ai365/chat-api:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai
+      # 使用外部MySQL数据库
+      - SQL_DSN=chatapihub:XdxpZsD6P2TSWTAx@tcp(1.92.83.101:3306)/chatapihub?parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci
+      # 数据库连接池配置
+      - SQL_MAX_IDLE_CONNS=10
+      - SQL_MAX_OPEN_CONNS=100
+      - SQL_MAX_LIFETIME=60
+      # 会话密钥
+      - SESSION_SECRET=chatapi_session_secret_2024
+      # 运行模式
+      - DEBUG=false
+      - GIN_MODE=release
+    volumes:
+      - /data/chat-api:/data
+    networks:
+      - default
+
+networks:
+  default:
