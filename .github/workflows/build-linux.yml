@@ -1,0 +1,197 @@
+name: Build Linux Version
+permissions:
+  contents: write
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: '构建类型'
+        required: true
+        default: 'amd64'
+        type: choice
+        options:
+        - amd64
+        - arm64
+        - both
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Build Frontend
+        env:
+          CI: ""
+        run: |
+          echo "🎨 构建前端界面..."
+          
+          # 构建管理界面
+          echo "📊 构建管理界面..."
+          cd web-admin
+          npm ci --silent
+          REACT_APP_VERSION=$(git describe --tags --always) npm run build
+          cd ..
+          
+          # 构建用户界面  
+          echo "👤 构建用户界面..."
+          cd web-user
+          npm ci --silent
+          REACT_APP_VERSION=$(git describe --tags --always) npm run build
+          cd ..
+          
+          echo "✅ 前端构建完成"
+          
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+          
+      - name: Download Go dependencies
+        run: |
+          echo "📥 下载Go依赖..."
+          go mod download
+          go mod tidy
+          echo "✅ 依赖下载完成"
+          
+      - name: Build Linux AMD64
+        if: ${{ github.event.inputs.build_type == 'amd64' || github.event.inputs.build_type == 'both' || github.event.inputs.build_type == '' }}
+        run: |
+          echo "🔨 构建Linux AMD64版本..."
+          VERSION=$(git describe --tags --always)
+          BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')
+          GIT_COMMIT=$(git rev-parse --short HEAD)
+          
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -ldflags "-s -w -X 'one-api/common.Version=$VERSION' -X 'one-api/common.BuildTime=$BUILD_TIME' -X 'one-api/common.GitCommit=$GIT_COMMIT'" \
+            -o chat-api-linux-amd64 .
+            
+          echo "✅ Linux AMD64构建完成"
+          ls -lh chat-api-linux-amd64
+          
+      - name: Build Linux ARM64
+        if: ${{ github.event.inputs.build_type == 'arm64' || github.event.inputs.build_type == 'both' }}
+        run: |
+          echo "🔨 构建Linux ARM64版本..."
+          VERSION=$(git describe --tags --always)
+          BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')
+          GIT_COMMIT=$(git rev-parse --short HEAD)
+          
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build \
+            -ldflags "-s -w -X 'one-api/common.Version=$VERSION' -X 'one-api/common.BuildTime=$BUILD_TIME' -X 'one-api/common.GitCommit=$GIT_COMMIT'" \
+            -o chat-api-linux-arm64 .
+            
+          echo "✅ Linux ARM64构建完成"
+          ls -lh chat-api-linux-arm64
+          
+      - name: Create deployment package
+        run: |
+          echo "📦 创建部署包..."
+          mkdir -p deploy
+          
+          # 复制二进制文件（优先AMD64）
+          if [ -f "chat-api-linux-amd64" ]; then
+            cp chat-api-linux-amd64 deploy/chat-api
+            echo "📋 使用AMD64版本作为默认二进制文件"
+          elif [ -f "chat-api-linux-arm64" ]; then
+            cp chat-api-linux-arm64 deploy/chat-api
+            echo "📋 使用ARM64版本作为默认二进制文件"
+          fi
+          
+          chmod +x deploy/chat-api
+          
+          # 复制配置文件
+          cp .env deploy/ 2>/dev/null || echo "⚠️ .env文件不存在，请手动创建"
+          cp docker-compose-simple.yml deploy/
+          cp MYSQL_CONFIG.md deploy/
+          cp README.md deploy/
+          
+          # 创建启动脚本
+          cat > deploy/start.sh << 'EOF'
+          #!/bin/bash
+          echo "🚀 启动 Chat API..."
+          echo "🗄️ MySQL数据库: 1.92.83.101:3306/chatapihub"
+          echo "🌐 访问地址: http://localhost:3000"
+          echo "👤 默认管理员: root / 123456"
+          echo ""
+          
+          # 检查端口是否被占用
+          if lsof -Pi :3000 -sTCP:LISTEN -t >/dev/null ; then
+              echo "⚠️ 端口3000已被占用，请先停止其他服务"
+              exit 1
+          fi
+          
+          # 启动服务
+          ./chat-api
+          EOF
+          chmod +x deploy/start.sh
+          
+          # 创建停止脚本
+          cat > deploy/stop.sh << 'EOF'
+          #!/bin/bash
+          echo "🛑 停止 Chat API..."
+          pkill -f "./chat-api" || echo "没有找到运行中的Chat API进程"
+          echo "✅ 服务已停止"
+          EOF
+          chmod +x deploy/stop.sh
+          
+          # 显示部署包内容
+          echo "📁 部署包内容:"
+          ls -la deploy/
+          
+          # 创建部署说明
+          cat > deploy/DEPLOY.md << 'EOF'
+          # Chat API 部署说明
+          
+          ## 快速部署
+          1. 上传整个deploy目录到服务器
+          2. 运行: `./start.sh`
+          3. 访问: http://your-server:3000
+          4. 默认管理员: root / 123456
+          
+          ## 手动部署
+          1. 设置执行权限: `chmod +x chat-api`
+          2. 直接运行: `./chat-api`
+          
+          ## 停止服务
+          运行: `./stop.sh`
+          
+          ## 数据库信息
+          - 主机: 1.92.83.101:3306
+          - 数据库: chatapihub
+          - 用户名: chatapihub
+          EOF
+          
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: chat-api-linux-${{ github.run_number }}
+          path: |
+            chat-api-linux-*
+            deploy/
+          retention-days: 30
+          
+      - name: Display build info
+        run: |
+          echo "🎉 构建完成！"
+          echo ""
+          echo "📊 构建信息:"
+          echo "  版本: $(git describe --tags --always)"
+          echo "  提交: $(git rev-parse --short HEAD)"
+          echo "  时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo ""
+          echo "📁 生成的文件:"
+          ls -la chat-api-linux-* 2>/dev/null || echo "  无二进制文件"
+          echo ""
+          echo "📦 部署包位置: deploy/"
+          echo "💾 下载地址: GitHub Actions Artifacts"

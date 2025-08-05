@@ -1,55 +1,159 @@
-name: Linux Release
+name: Build and Release
 permissions:
   contents: write
 on:
   push:
+    branches: [ main, master ]
     tags:
       - '*'
       - '!*-alpha*'
-  workflow_dispatch: 
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: |
+            web-admin/package-lock.json
+            web-user/package-lock.json
+
       - name: Build Frontend
         env:
           CI: ""
         run: |
+          echo "🎨 构建前端..."
+
+          # 构建管理界面
           cd web-admin
-          npm install
-          REACT_APP_VERSION=$(git describe --tags) npm run build
+          npm ci
+          REACT_APP_VERSION=$(git describe --tags --always) npm run build
           cd ..
+
+          # 构建用户界面
           cd web-user
-          npm install
-          REACT_APP_VERSION=$(git describe --tags) npm run build
+          npm ci
+          REACT_APP_VERSION=$(git describe --tags --always) npm run build
           cd ..
+
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
-          go-version: '>=1.18.0'
-      - name: Build Backend (amd64)
+          go-version: '1.22'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download Go dependencies
         run: |
+          echo "📥 下载Go依赖..."
           go mod download
-          go build -ldflags "-s -w -X 'one-api/common.Version=$(git describe --tags)' -extldflags '-static'" -o chat-api
-      - name: Build Backend (arm64)
+          go mod tidy
+
+      - name: Build Backend (Linux AMD64)
         run: |
-          sudo apt-get update
-          sudo apt-get install gcc-aarch64-linux-gnu
-          CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X 'chat-api/common.Version=$(git describe --tags)' -extldflags '-static'" -o chat-api-arm64
-      - name: Release
+          echo "🔨 构建Linux AMD64版本..."
+          VERSION=$(git describe --tags --always)
+          BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')
+          GIT_COMMIT=$(git rev-parse --short HEAD)
+
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -ldflags "-s -w -X 'one-api/common.Version=$VERSION' -X 'one-api/common.BuildTime=$BUILD_TIME' -X 'one-api/common.GitCommit=$GIT_COMMIT'" \
+            -o chat-api-linux-amd64 .
+
+      - name: Build Backend (Linux ARM64)
+        run: |
+          echo "🔨 构建Linux ARM64版本..."
+          VERSION=$(git describe --tags --always)
+          BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')
+          GIT_COMMIT=$(git rev-parse --short HEAD)
+
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build \
+            -ldflags "-s -w -X 'one-api/common.Version=$VERSION' -X 'one-api/common.BuildTime=$BUILD_TIME' -X 'one-api/common.GitCommit=$GIT_COMMIT'" \
+            -o chat-api-linux-arm64 .
+
+      - name: Create deployment package
+        run: |
+          echo "📦 创建部署包..."
+          mkdir -p deploy
+
+          # 复制二进制文件
+          cp chat-api-linux-amd64 deploy/chat-api
+          chmod +x deploy/chat-api
+
+          # 复制配置文件
+          cp .env deploy/ || echo "⚠️ .env文件不存在"
+          cp docker-compose-simple.yml deploy/
+          cp MYSQL_CONFIG.md deploy/
+          cp README.md deploy/
+
+          # 创建启动脚本
+          cat > deploy/start.sh << 'EOF'
+          #!/bin/bash
+          echo "🚀 启动 Chat API..."
+          echo "📊 MySQL数据库: 1.92.83.101:3306/chatapihub"
+          echo "🌐 访问地址: http://localhost:3000"
+          echo "👤 默认管理员: root / 123456"
+          echo ""
+          ./chat-api
+          EOF
+          chmod +x deploy/start.sh
+
+          # 显示文件信息
+          echo "📁 部署包内容:"
+          ls -la deploy/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: chat-api-linux-builds
+          path: |
+            chat-api-linux-amd64
+            chat-api-linux-arm64
+            deploy/
+
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            chat-api
-            chat-api-arm64
-          draft: true
+            chat-api-linux-amd64
+            chat-api-linux-arm64
+          draft: false
+          generate_release_notes: true
+          body: |
+            ## 🚀 Chat API Release
+
+            ### 📦 编译版本
+            - `chat-api-linux-amd64`: Linux AMD64 版本（推荐用于大多数服务器）
+            - `chat-api-linux-arm64`: Linux ARM64 版本（用于ARM架构服务器）
+
+            ### 🗄️ 数据库配置
+            - MySQL服务器: 1.92.83.101:3306
+            - 数据库名: chatapihub
+            - 用户名: chatapihub
+
+            ### 🚀 快速部署
+            1. 下载对应架构的二进制文件
+            2. 上传到服务器并设置执行权限: `chmod +x chat-api-linux-amd64`
+            3. 运行: `./chat-api-linux-amd64`
+            4. 访问: http://your-server:3000
+            5. 默认管理员: root / 123456
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
