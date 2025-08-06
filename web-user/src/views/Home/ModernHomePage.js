@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from 'hooks/useLanguage';
 import SEOHead from 'ui-component/SEOHead';
 // import PricingSection from './PricingSection'; // 暂时注释，准备替换为使用量图表
+import ModelUsageChart from './ModelUsageChart';
 
 // 图标导入
 import { 
@@ -612,8 +613,8 @@ const ModernHomePage = () => {
           </Container>
         </Box>
 
-        {/* 价格表区域 - 暂时注释，准备替换为使用量图表 */}
-        {/* <PricingSection /> */}
+        {/* 模型使用量图表区域 */}
+        <ModelUsageChart />
       </Box>
     </>
   );
