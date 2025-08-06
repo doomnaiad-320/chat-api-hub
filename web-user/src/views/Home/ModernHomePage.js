@@ -124,9 +124,9 @@ const ModernHomePage = () => {
         <Box
           sx={{
             minHeight: '100vh',
-            background: theme.palette.mode === 'dark' 
-              ? 'linear-gradient(135deg, #0c4a6e 0%, #1e293b 50%, #0f172a 100%)'
-              : 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+            background: theme.palette.mode === 'dark'
+              ? '#0f172a'
+              : '#1e293b',
             display: 'flex',
             alignItems: 'center',
             position: 'relative',
@@ -137,8 +137,24 @@ const ModernHomePage = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              background: `radial-gradient(circle at 20% 80%, ${alpha(theme.palette.primary.main, 0.3)} 0%, transparent 50%),
-                          radial-gradient(circle at 80% 20%, ${alpha(theme.palette.secondary.main, 0.3)} 0%, transparent 50%)`,
+              background: `
+                radial-gradient(circle at 20% 80%, ${alpha('#3b82f6', 0.15)} 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, ${alpha('#8b5cf6', 0.15)} 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, ${alpha('#06b6d4', 0.1)} 0%, transparent 50%)
+              `,
+              pointerEvents: 'none'
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `
+                linear-gradient(45deg, transparent 30%, ${alpha('#3b82f6', 0.05)} 50%, transparent 70%),
+                linear-gradient(-45deg, transparent 30%, ${alpha('#8b5cf6', 0.05)} 50%, transparent 70%)
+              `,
               pointerEvents: 'none'
             }
           }}
