@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from 'hooks/useLanguage';
 import SEOHead from 'ui-component/SEOHead';
-import PricingSection from './PricingSection';
+// import PricingSection from './PricingSection'; // 暂时注释，准备替换为使用量图表
 
 // 图标导入
 import { 
@@ -124,39 +124,9 @@ const ModernHomePage = () => {
         <Box
           sx={{
             minHeight: '100vh',
-            background: theme.palette.mode === 'dark'
-              ? '#0f172a'
-              : '#1e293b',
             display: 'flex',
             alignItems: 'center',
-            position: 'relative',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `
-                radial-gradient(circle at 20% 80%, ${alpha('#3b82f6', 0.15)} 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, ${alpha('#8b5cf6', 0.15)} 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, ${alpha('#06b6d4', 0.1)} 0%, transparent 50%)
-              `,
-              pointerEvents: 'none'
-            },
-            '&::after': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `
-                linear-gradient(45deg, transparent 30%, ${alpha('#3b82f6', 0.05)} 50%, transparent 70%),
-                linear-gradient(-45deg, transparent 30%, ${alpha('#8b5cf6', 0.05)} 50%, transparent 70%)
-              `,
-              pointerEvents: 'none'
-            }
+            position: 'relative'
           }}
         >
           <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
@@ -173,9 +143,10 @@ const ModernHomePage = () => {
                       sx={{
                         fontSize: { xs: '2.5rem', md: '4rem' },
                         fontWeight: 800,
-                        color: 'white',
                         mb: 2,
-                        background: 'linear-gradient(45deg, #fff 30%, #e0e7ff 90%)',
+                        background: theme.palette.mode === 'dark'
+                          ? 'linear-gradient(45deg, #3b82f6 30%, #8b5cf6 90%)'
+                          : 'linear-gradient(45deg, #1e40af 30%, #7c3aed 90%)',
                         backgroundClip: 'text',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent'
@@ -184,15 +155,15 @@ const ModernHomePage = () => {
                       {t('home.title')}
                     </Typography>
                   </motion.div>
-                  
+
                   <motion.div variants={fadeInUp}>
                     <Typography
                       variant="h4"
                       sx={{
                         fontSize: { xs: '1.2rem', md: '1.5rem' },
-                        color: alpha('#fff', 0.9),
+                        color: theme.palette.text.primary,
                         mb: 3,
-                        fontWeight: 300
+                        fontWeight: 400
                       }}
                     >
                       {t('home.subtitle')}
@@ -204,12 +175,27 @@ const ModernHomePage = () => {
                       variant="body1"
                       sx={{
                         fontSize: '1.1rem',
-                        color: alpha('#fff', 0.8),
-                        mb: 4,
+                        color: theme.palette.text.secondary,
+                        mb: 3,
                         lineHeight: 1.6
                       }}
                     >
                       {t('home.description')}
+                    </Typography>
+                  </motion.div>
+
+                  <motion.div variants={fadeInUp}>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontSize: '1rem',
+                        color: theme.palette.text.secondary,
+                        mb: 4,
+                        lineHeight: 1.8,
+                        opacity: 0.9
+                      }}
+                    >
+                      我们致力于为开发者提供最优质的AI服务体验。无论您是在开发智能聊天机器人、代码助手，还是创意生成应用，我们都能为您提供稳定、高效、经济的解决方案。
                     </Typography>
                   </motion.div>
 
@@ -225,18 +211,19 @@ const ModernHomePage = () => {
                           px: 4,
                           fontSize: '1.1rem',
                           borderRadius: 3,
-                          background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
-                          boxShadow: '0 8px 32px rgba(102, 126, 234, 0.4)',
+                          background: 'linear-gradient(45deg, #3b82f6 30%, #8b5cf6 90%)',
+                          boxShadow: '0 8px 32px rgba(59, 130, 246, 0.4)',
                           '&:hover': {
                             transform: 'translateY(-2px)',
-                            boxShadow: '0 12px 40px rgba(102, 126, 234, 0.6)'
+                            boxShadow: '0 12px 40px rgba(59, 130, 246, 0.6)',
+                            background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)'
                           },
                           transition: 'all 0.3s ease'
                         }}
                       >
                         {t('home.cta.start')}
                       </Button>
-                      
+
                       <Button
                         variant="outlined"
                         size="large"
@@ -246,11 +233,11 @@ const ModernHomePage = () => {
                           px: 4,
                           fontSize: '1.1rem',
                           borderRadius: 3,
-                          borderColor: alpha('#fff', 0.3),
-                          color: 'white',
+                          borderColor: theme.palette.primary.main,
+                          color: theme.palette.primary.main,
                           '&:hover': {
-                            borderColor: '#fff',
-                            backgroundColor: alpha('#fff', 0.1),
+                            borderColor: theme.palette.primary.dark,
+                            backgroundColor: alpha(theme.palette.primary.main, 0.1),
                             transform: 'translateY(-2px)'
                           },
                           transition: 'all 0.3s ease'
@@ -263,43 +250,107 @@ const ModernHomePage = () => {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  <motion.div
-                    variants={fadeInUp}
-                    style={{ textAlign: 'center' }}
-                  >
-                    <Box
-                      sx={{
-                        width: { xs: 300, md: 400 },
-                        height: { xs: 300, md: 400 },
-                        mx: 'auto',
-                        background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.2)} 0%, transparent 70%)`,
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          width: '80%',
-                          height: '80%',
-                          border: `2px solid ${alpha('#fff', 0.2)}`,
-                          borderRadius: '50%',
-                          animation: 'pulse 2s infinite'
-                        },
-                        '@keyframes pulse': {
-                          '0%': {
-                            transform: 'scale(1)',
-                            opacity: 1
-                          },
-                          '100%': {
-                            transform: 'scale(1.1)',
-                            opacity: 0
-                          }
-                        }
-                      }}
-                    >
-                      <IconBrain size={120} color="white" />
+                  <motion.div variants={fadeInUp}>
+                    <Box sx={{ pl: { md: 4 } }}>
+                      {/* 核心优势 */}
+                      <Typography
+                        variant="h5"
+                        sx={{
+                          fontWeight: 600,
+                          mb: 3,
+                          color: theme.palette.primary.main
+                        }}
+                      >
+                        🚀 核心优势
+                      </Typography>
+
+                      <Stack spacing={2} sx={{ mb: 4 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              backgroundColor: theme.palette.primary.main,
+                              mt: 1,
+                              flexShrink: 0
+                            }}
+                          />
+                          <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
+                            <strong>统一接口</strong> - 一个API密钥访问所有主流AI模型
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              backgroundColor: theme.palette.secondary.main,
+                              mt: 1,
+                              flexShrink: 0
+                            }}
+                          />
+                          <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
+                            <strong>高性价比</strong> - 比官方价格更优惠，按需付费无最低消费
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              backgroundColor: theme.palette.success.main,
+                              mt: 1,
+                              flexShrink: 0
+                            }}
+                          />
+                          <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
+                            <strong>稳定可靠</strong> - 99.9%服务可用性，全球CDN加速
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              backgroundColor: theme.palette.warning.main,
+                              mt: 1,
+                              flexShrink: 0
+                            }}
+                          />
+                          <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
+                            <strong>开发友好</strong> - 完整文档，丰富示例，快速集成
+                          </Typography>
+                        </Box>
+                      </Stack>
+
+                      {/* 支持的应用 */}
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 600,
+                          mb: 2,
+                          color: theme.palette.text.primary
+                        }}
+                      >
+                        💡 适用场景
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: theme.palette.text.secondary,
+                          lineHeight: 1.6
+                        }}
+                      >
+                        SillyTavern • Cursor • Cline • Continue • Omate • Tavo • Claude Code • Gemini CLI • 以及更多AI应用...
+                      </Typography>
                     </Box>
                   </motion.div>
                 </Grid>
@@ -561,8 +612,8 @@ const ModernHomePage = () => {
           </Container>
         </Box>
 
-        {/* 价格表区域 */}
-        <PricingSection />
+        {/* 价格表区域 - 暂时注释，准备替换为使用量图表 */}
+        {/* <PricingSection /> */}
       </Box>
     </>
   );
