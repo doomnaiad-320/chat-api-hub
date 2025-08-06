@@ -1,19 +1,44 @@
+// import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 // material-ui
-import { useTheme } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import {
   Avatar,
-  Box,
-  Chip,
-  Divider,
-  Typography
+  Card,
+  CardContent,
+  // Grid,
+  // LinearProgress,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,Box,Chip 
+  // linearProgressClasses
 } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import User1 from 'assets/images/users/user-round.svg';
 import { useNavigate } from 'react-router-dom';
 import { API } from 'utils/api';
-import { calculateQuota, showError } from 'utils/common';
+import { calculateQuota } from 'utils/common';
+
+
+const CardStyle = styled(Card)(({ theme }) => ({
+  background: theme.typography.menuChip.background,
+  marginBottom: '22px',
+  overflow: 'hidden',
+  position: 'relative',
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    width: '157px',
+    height: '157px',
+    background: theme.palette.primary[200],
+    borderRadius: '50%',
+    top: '-105px',
+    right: '-96px'
+  }
+}));
 
 
 const MenuCard = () => {
@@ -36,121 +61,69 @@ const MenuCard = () => {
     if (account.user) {
       loadUser().then();
     }
-  }, [account.user?.username]);
-
+  }, [account.user?.username]); 
+  
   return (
-    <Box
-      sx={{
-        p: 2,
-        mb: 2,
-        borderRadius: 2,
-        backgroundColor: theme.palette.mode === 'dark'
-          ? theme.palette.grey[800]
-          : theme.palette.grey[50],
-        border: `1px solid ${theme.palette.divider}`,
-        transition: 'all 0.2s ease-in-out',
-        '&:hover': {
-          backgroundColor: theme.palette.mode === 'dark'
-            ? theme.palette.grey[700]
-            : theme.palette.grey[100],
-          borderColor: theme.palette.primary.main,
-        }
-      }}
-    >
-      {/* 用户信息区域 */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          mb: 1.5,
-          cursor: 'pointer'
-        }}
-        onClick={() => navigate('/profile')}
-      >
-        <Avatar
-          sx={{
-            width: 32,
-            height: 32,
-            mr: 1.5,
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            fontSize: '0.875rem'
-          }}
-        >
-          <PersonIcon fontSize="small" />
-        </Avatar>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography
-            variant="subtitle2"
-            sx={{
-              fontWeight: 600,
-              color: theme.palette.text.primary,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            {account.user?.username}
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{
-              color: theme.palette.text.secondary,
-              fontSize: '0.75rem'
-            }}
-          >
-            {inputs.group || '用户组'}
-          </Typography>
-        </Box>
-      </Box>
+    <CardStyle>
+      <CardContent sx={{ p: 2 }}>
+        <List sx={{ p: 0, m: 0 }}>
+          <ListItem alignItems="flex-start" disableGutters sx={{ p: 0 }}>
+            <ListItemAvatar sx={{ mt: 0 }}>
+              <Avatar
+                variant="rounded"
+                src={User1}
+                sx={{
+                  ...theme.typography.commonAvatar,
+                  ...theme.typography.largeAvatar,
+                  color: theme.palette.primary.main,
+                  border: 'none',
+                  borderColor: theme.palette.primary.main,
+                  background: '#fff',
+                  marginRight: '12px'
+                }}
+                onClick={() => navigate('/profile')}
+              ></Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              sx={{ mt: 0 }}
+              primary={
+                <Typography variant="subtitle1" >
+                  <Box >
+                    <Chip 
+                      sx={{ cursor: 'pointer' }} 
+                      label={`${account.user?.username} - ${inputs.group}`} 
+                      color="primary"
+                      size="small"
+                      variant="outlined"
+                      type='ghost'
+                      onClick={() => navigate('/profile')}>
+                      
+                    </Chip>
+                  </Box>
+                  
+                </Typography>
+              }
+              secondary={
+                <Typography
+                  sx={{ mt: 1, display: 'flex' }}
+                  variant="subtitle1"
+                >
+                  <Chip
+                    icon={<MonetizationOnIcon />} // 在Chip内部使用图标
+                    label={calculateQuota(inputs.quota)}
+                    size="small"
+                    variant="outlined" // 设置变体，使其看起来更像按钮
+                    sx={{ cursor: 'pointer' }} // 进一步强调可点击的视觉效果
+                  />
 
-      <Divider sx={{ my: 1 }} />
-
-      {/* 余额信息区域 */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          cursor: 'pointer',
-          p: 1,
-          borderRadius: 1,
-          '&:hover': {
-            backgroundColor: theme.palette.action.hover
-          }
-        }}
-        onClick={() => navigate('/topup')}
-      >
-        <AccountBalanceWalletIcon
-          sx={{
-            mr: 1,
-            color: theme.palette.success.main,
-            fontSize: '1.25rem'
-          }}
-        />
-        <Box>
-          <Typography
-            variant="caption"
-            sx={{
-              color: theme.palette.text.secondary,
-              fontSize: '0.75rem',
-              display: 'block'
-            }}
-          >
-            余额
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 600,
-              color: theme.palette.success.main,
-              fontSize: '0.875rem'
-            }}
-          >
-            {calculateQuota(inputs.quota)}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+                </Typography>
+              }
+            />
+          </ListItem>
+        </List>
+        {/* <LinearProgressWithLabel value={80} /> */}
+      </CardContent>
+    </CardStyle>
   );
 };
 

@@ -32,41 +32,23 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           component="div"
           style={{
             height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
-            paddingLeft: '12px',
-            paddingRight: '12px'
+            paddingLeft: '16px',
+            paddingRight: '16px'
           }}
         >
-          <MenuCard />
           <MenuList />
-          <Stack direction="row" justifyContent="center" sx={{ mt: 2, mb: 2 }}>
-            <Chip
-              label={process.env.REACT_APP_VERSION}
-              disabled
-              size="small"
-              sx={{
-                cursor: 'pointer',
-                fontSize: '0.75rem',
-                height: '24px'
-              }}
-            />
+          <MenuCard />
+          <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
+            <Chip label={process.env.REACT_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
           </Stack>
         </PerfectScrollbar>
       </BrowserView>
       <MobileView>
         <Box sx={{ px: 2 }}>
-          <MenuCard />
           <MenuList />
-          <Stack direction="row" justifyContent="center" sx={{ mt: 2, mb: 2 }}>
-            <Chip
-              label={process.env.REACT_APP_VERSION}
-              disabled
-              size="small"
-              sx={{
-                cursor: 'pointer',
-                fontSize: '0.75rem',
-                height: '24px'
-              }}
-            />
+          <MenuCard />
+          <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
+            <Chip label={process.env.REACT_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
           </Stack>
         </Box>
       </MobileView>

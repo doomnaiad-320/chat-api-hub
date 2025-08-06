@@ -70,43 +70,28 @@ export default function componentStyleOverrides(theme) {
         }
       }
     },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: '12px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-          '&:hover': {
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)'
-          }
-        }
-      }
-    },
     MuiCardHeader: {
       styleOverrides: {
         root: {
           color: theme.colors?.textDark,
-          padding: '16px 20px'
+          padding: '24px'
         },
         title: {
-          fontSize: '1.125rem',
-          fontWeight: 600
+          fontSize: '1.125rem'
         }
       }
     },
     MuiCardContent: {
       styleOverrides: {
         root: {
-          padding: '16px 20px',
-          '&:last-child': {
-            paddingBottom: '20px'
-          }
+          padding: '24px'
         }
       }
     },
     MuiCardActions: {
       styleOverrides: {
         root: {
-          padding: '12px 20px'
+          padding: '24px'
         }
       }
     },

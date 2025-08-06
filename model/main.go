@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -38,42 +39,38 @@ func createRootAccountIfNeed() error {
 }
 
 func chooseDB() (*gorm.DB, error) {
-	// 优先使用环境变量SQL_DSN
-	if dsn := os.Getenv("SQL_DSN"); dsn != "" {
-		if strings.HasPrefix(dsn, "mysql://") || strings.Contains(dsn, "@tcp(") {
-			common.SysLog("使用MySQL数据库")
-			// 检查parseTime参数
-			if !strings.Contains(dsn, "parseTime") {
-				if strings.Contains(dsn, "?") {
-					dsn += "&parseTime=true"
-				} else {
-					dsn += "?parseTime=true"
-				}
-			}
-			// 添加其他MySQL连接参数
-			if !strings.Contains(dsn, "charset") {
-				if strings.Contains(dsn, "?") {
-					dsn += "&charset=utf8mb4"
-				} else {
-					dsn += "?charset=utf8mb4"
-				}
-			}
-			return gorm.Open(mysql.Open(dsn), &gorm.Config{
-				PrepareStmt: true,
+	if os.Getenv("SQL_DSN") != "" {
+		dsn := os.Getenv("SQL_DSN")
+		if strings.HasPrefix(dsn, "postgres://") {
+			// Use PostgreSQL
+			common.SysLog("using PostgreSQL as database")
+			common.UsingPostgreSQL = true
+			return gorm.Open(postgres.New(postgres.Config{
+				DSN:                  dsn,
+				PreferSimpleProtocol: true, // disables implicit prepared statement usage
+			}), &gorm.Config{
+				PrepareStmt: true, // precompile SQL
 			})
 		}
-		// 如果DSN不是MySQL格式，尝试作为SQLite处理
-		common.SysLog("使用SQLite数据库: " + dsn)
-		return gorm.Open(sqlite.Open(dsn), &gorm.Config{
-			PrepareStmt: true,
+		// Use MySQL
+		common.SysLog("using MySQL as database")
+		// check parseTime
+		if !strings.Contains(dsn, "parseTime") {
+			if strings.Contains(dsn, "?") {
+				dsn += "&parseTime=true"
+			} else {
+				dsn += "?parseTime=true"
+			}
+		}
+		return gorm.Open(mysql.Open(dsn), &gorm.Config{
+			PrepareStmt: true, // precompile SQL
 		})
 	}
-
-	// 默认使用SQLite数据库
-	dbPath := "./one-api.db"
-	common.SysLog("使用默认SQLite数据库: " + dbPath)
-	return gorm.Open(sqlite.Open(dbPath), &gorm.Config{
-		PrepareStmt: true,
+	// Use SQLite
+	common.SysLog("SQL_DSN not set, using SQLite as database")
+	common.UsingSQLite = true
+	return gorm.Open(sqlite.Open(common.SQLitePath), &gorm.Config{
+		PrepareStmt: true, // precompile SQL
 	})
 }
 
