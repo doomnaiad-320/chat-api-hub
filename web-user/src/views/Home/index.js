@@ -3,24 +3,23 @@ import { useSelector } from 'react-redux';
 import { showError, showNotice } from 'utils/common';
 import { API } from 'utils/api';
 import { marked } from 'marked';
-import BaseIndex from './baseIndex';
+import ModernHomePage from './ModernHomePage';
 import { Box, Container } from '@mui/material';
-
-
 
 const Home = () => {
   const [homePageContentLoaded, setHomePageContentLoaded] = useState(false);
   const [homePageContent, setHomePageContent] = useState('');
   const account = useSelector((state) => state.account);
+
   const isUserLoggedIn = () => {
-    // 使用 Redux 中的 account 状态来判断用户是否登录
-    return !!account.user; // 假设 token 存在即表示用户已登录
+    return !!account.user;
   };
+
   const displayNotice = async () => {
     try {
       const res = await API.get('/api/notice');
       const { success, message, data } = res.data;
-      if (success && data) { 
+      if (success && data) {
         const htmlNotice = marked(data);
         showNotice(htmlNotice, true);
       } else if (!success) {
@@ -30,29 +29,32 @@ const Home = () => {
       showError('无法加载公告');
     }
   };
-  
 
   const displayHomePageContent = async () => {
     setHomePageContent(localStorage.getItem('home_page_content') || '');
-    const res = await API.get('/api/home_page_content');
-    const { success, message, data } = res.data;
-    if (success) {
-      let content = data;
-      if (!data.startsWith('https://')) {
-        content = marked.parse(data);
+    try {
+      const res = await API.get('/api/home_page_content');
+      const { success, data } = res.data;
+      if (success) {
+        let content = data;
+        if (!data.startsWith('https://')) {
+          content = marked.parse(data);
+        }
+        setHomePageContent(content);
+        localStorage.setItem('home_page_content', content);
+      } else {
+        // 如果没有自定义内容，使用现代化首页
+        setHomePageContent('');
       }
-      setHomePageContent(content);
-      localStorage.setItem('home_page_content', content);
-    } else {
-      showError(message);
-      setHomePageContent('加载首页内容失败...');
+    } catch (error) {
+      // 如果API调用失败，使用现代化首页
+      setHomePageContent('');
     }
     setHomePageContentLoaded(true);
   };
 
   const checkAndDisplayNotice = () => {
     if (!isUserLoggedIn()) {
-      // 只有未登录用户才显示公告
       displayNotice();
     }
   };
@@ -65,7 +67,7 @@ const Home = () => {
   return (
     <>
       {homePageContentLoaded && homePageContent === '' ? (
-        <BaseIndex />
+        <ModernHomePage />
       ) : (
         <>
           <Box>

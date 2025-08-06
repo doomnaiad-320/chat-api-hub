@@ -6,12 +6,15 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ThemeButton from 'ui-component/ThemeButton';
+import LanguageButton from 'ui-component/LanguageButton';
+import { useLanguage } from 'hooks/useLanguage';
 import { API } from 'utils/api';
 
 const Header = () => {
   const theme = useTheme();
   const { pathname } = useLocation();
   const account = useSelector((state) => state.account);
+  const { t } = useLanguage();
   const [chatLink, setChatLink] = useState('');
   const isExtraSmallScreen = useMediaQuery(theme.breakpoints.down('xs'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -100,9 +103,10 @@ const Header = () => {
           marginTop: isExtraSmallScreen ? '8px' : '0',
         }}
       >
-        <NavButton to="/home">首页</NavButton>
-        <NavButton to="/about">教程</NavButton>
-        {chatLink && <NavButton to="/chatweb" chatLink={chatLink}>对话</NavButton>}
+        <NavButton to="/home">{t('nav.home')}</NavButton>
+        <NavButton to="/about">{t('nav.about')}</NavButton>
+        {chatLink && <NavButton to="/chatweb" chatLink={chatLink}>{t('nav.chat')}</NavButton>}
+        <LanguageButton />
         <ThemeButton />
         <Button
           component={Link}
@@ -120,7 +124,7 @@ const Header = () => {
             }
           }}
         >
-          {account.user ? '控制台' : '登入'}
+          {account.user ? t('nav.dashboard') : t('nav.login')}
         </Button>
       </Stack>
     </Box>

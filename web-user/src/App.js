@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, StyledEngineProvider } from '@mui/material';
+import { HelmetProvider } from 'react-helmet-async';
 
 import { SET_THEME } from 'store/actions';
 // routing
@@ -18,6 +19,7 @@ import NavigationScroll from 'layout/NavigationScroll';
 import UserProvider from 'contexts/UserContext';
 import StatusProvider from 'contexts/StatusContext';
 import { SnackbarProvider } from 'notistack';
+import { LanguageProvider } from 'hooks/useLanguage';
 
 // ==============================|| APP ||============================== //
 
@@ -34,20 +36,24 @@ const App = () => {
 
 
   return (
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={themes(customization)}>
-        <CssBaseline />
-        <NavigationScroll>
-          <SnackbarProvider autoHideDuration={5000} maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-            <UserProvider>
-              <StatusProvider>
-                <Routes />
-              </StatusProvider>
-            </UserProvider>
-          </SnackbarProvider>
-        </NavigationScroll>
-      </ThemeProvider>
-    </StyledEngineProvider>
+    <HelmetProvider>
+      <LanguageProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={themes(customization)}>
+            <CssBaseline />
+            <NavigationScroll>
+              <SnackbarProvider autoHideDuration={5000} maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <UserProvider>
+                  <StatusProvider>
+                    <Routes />
+                  </StatusProvider>
+                </UserProvider>
+              </SnackbarProvider>
+            </NavigationScroll>
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </LanguageProvider>
+    </HelmetProvider>
   );
 };
 
