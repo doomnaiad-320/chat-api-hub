@@ -32,6 +32,7 @@ type ModelBillingInfo struct {
 	ModelRatio           float64 `json:"model_ratio"` // ModelRatio中的值
 	ModeCompletionlRatio float64 `json:"model_completion_ratio"`
 	ModelPrice           float64 `json:"model_ratio_2"` // ModelPrice中的值（如果有的话）
+	HasModelPrice        bool    `json:"has_model_price"` // 是否在ModelPrice中配置了
 }
 
 type ModelRatios map[string]float64
@@ -154,10 +155,13 @@ func GetGroupModelsBilling(group string, search string) ([]ModelBillingInfo, err
 
 		if ratio, exists := ModelPrice[model]; exists {
 			modelInfo.ModelPrice = ratio * groupRatioValue
+			modelInfo.HasModelPrice = true
 		} else if hasDefault {
 			modelInfo.ModelPrice = defaultModelPrice * groupRatioValue
+			modelInfo.HasModelPrice = true
 		} else {
 			modelInfo.ModelPrice = 0
+			modelInfo.HasModelPrice = false
 		}
 
 		modelInfo.Model = model

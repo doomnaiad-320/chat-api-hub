@@ -62,6 +62,12 @@ function formatNumber(num) {
   }
 }
 
+// 格式化价格显示，去掉末尾的0
+function formatPrice(price) {
+  if (price === undefined || price === null || price === 0) return '0';
+  return parseFloat(price.toFixed(6)).toString();
+}
+
 export default function ModelPricing() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -69,6 +75,7 @@ export default function ModelPricing() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentSearchTerm, setCurrentSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const [activePricingFilter, setActivePricingFilter] = useState('All');
 
   // 筛选器配置
   const filterOptions = [
@@ -79,6 +86,14 @@ export default function ModelPricing() {
     { key: 'xAI', label: 'xAI', icon: getFilterIcon('xAI') },
     { key: 'DeepSeek', label: 'DeepSeek', icon: getFilterIcon('DeepSeek') },
     { key: 'Other', label: '其他', icon: <IconFilter size={16} /> }
+  ];
+
+  // 计费类型筛选选项
+  const pricingFilterOptions = [
+    { key: 'All', label: '全部计费', icon: <IconFilter size={16} /> },
+    { key: 'PerCall', label: '按次计费', icon: <IconFilter size={16} /> },
+    { key: 'Free', label: '免费', icon: <IconFilter size={16} /> },
+    { key: 'Token', label: 'Token计费', icon: <IconFilter size={16} /> }
   ];
 
   // 复制模型名称到剪贴板
@@ -109,6 +124,8 @@ export default function ModelPricing() {
     }
   }
 
+
+
   const loadModels = async (search) => {
     try {
       let url = '/api/user/modelbilling';
@@ -117,13 +134,32 @@ export default function ModelPricing() {
       if (params.toString()) url += `?${params.toString()}`;
 
       let res = await API.get(url);
+
+      // 检查响应结构
+      if (!res || !res.data) {
+        console.error('API响应结构错误:', res);
+        setModels([]);
+        return;
+      }
+
       const { success, data } = res.data;
       if (success && Array.isArray(data)) {
+        console.log('📊 模型数据加载成功:', {
+          总数: data.length,
+          前3个模型: data.slice(0, 3).map(m => ({
+            model: m.model,
+            model_ratio_2: m.model_ratio_2,
+            model_ratio: m.model_ratio,
+            model_completion_ratio: m.model_completion_ratio
+          }))
+        });
         setModels(data);
       } else {
+        console.error('API返回数据格式错误:', res.data);
         setModels([]);
       }
     } catch (err) {
+      console.error('加载模型数据失败:', err);
       setModels([]);
     }
   };
@@ -183,8 +219,55 @@ export default function ModelPricing() {
 
 
 
+  // 根据模型配置判断计费方式 - 使用 has_model_price 字段
+  const getModelBillingType = (model) => {
+    console.log('🔍 判断模型计费类型:', {
+      model: model.model,
+      model_ratio_2: model.model_ratio_2,
+      has_model_price: model.has_model_price,
+      model_ratio: model.model_ratio,
+      model_completion_ratio: model.model_completion_ratio
+    });
+
+    // 1. 检查是否在ModelPrice中配置了按次计费
+    if (model.has_model_price) {
+      if (model.model_ratio_2 > 0) {
+        console.log('✅ 按次计费:', model.model, '价格:', model.model_ratio_2);
+        return 'PerCall'; // 按次计费
+      } else {
+        console.log('✅ 按次免费:', model.model, '(ModelPrice中配置为0)');
+        return 'Free'; // 在ModelPrice中配置但价格为0，显示免费
+      }
+    }
+
+    // 2. 没有在ModelPrice中配置，检查Token计费配置
+    const hasTokenRatio = (model.model_ratio !== undefined && model.model_ratio !== null) ||
+                         (model.model_completion_ratio !== undefined && model.model_completion_ratio !== null);
+
+    if (hasTokenRatio) {
+      console.log('✅ Token计费:', model.model, 'ratio:', model.model_ratio, 'completion:', model.model_completion_ratio);
+      return 'Token'; // Token计费
+    }
+
+    console.log('✅ 完全免费:', model.model, '(无任何计费配置)');
+    return 'Free'; // 完全免费
+  };
+
+  // 根据计费类型筛选模型
+  const filterModelsByPricing = (models, filter) => {
+    if (filter === 'All') return models;
+
+    return models.filter(model => {
+      const billingType = getModelBillingType(model);
+      return billingType === filter;
+    });
+  };
+
   // 应用筛选器和搜索
-  const filteredModels = filterModelsByCategory(models, activeFilter).filter(model =>
+  const filteredModels = filterModelsByPricing(
+    filterModelsByCategory(models, activeFilter),
+    activePricingFilter
+  ).filter(model =>
     model.model.toLowerCase().includes(currentSearchTerm.toLowerCase())
   );
 
@@ -262,8 +345,11 @@ export default function ModelPricing() {
 
   // 模型卡片组件
   const ModelCard = ({ model }) => {
-    const hasPerCallPrice = model.model_ratio_2 !== undefined && model.model_ratio_2 !== 0;
-    const hasTokenPrice = model.model_ratio !== undefined && model.model_ratio !== 0;
+    // 使用统一的计费类型判断逻辑
+    const billingType = getModelBillingType(model);
+    const isFreeModel = billingType === 'Free';
+    const hasPerCallPrice = billingType === 'PerCall';
+    const hasTokenPrice = billingType === 'Token';
 
     return (
       <Card
@@ -289,11 +375,13 @@ export default function ModelPricing() {
               sx={{
                 ml: 1,
                 fontWeight: 500,
-                fontSize: isMobile ? '0.9rem' : '1rem',
+                fontSize: isMobile ? '0.75rem' : '0.85rem',
                 color: theme.palette.text.primary,
                 flex: 1,
-                wordBreak: 'break-all',
-                lineHeight: 1.3
+                lineHeight: 1.2,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}
             >
               {model.model}
@@ -311,7 +399,7 @@ export default function ModelPricing() {
                   }
                 }}
               >
-                <IconCopy size={14} />
+                <IconCopy size={12} />
               </IconButton>
             </Tooltip>
           </Box>
@@ -320,68 +408,94 @@ export default function ModelPricing() {
 
           {/* 价格信息 */}
           <Box>
-            {hasPerCallPrice ? (
-              // 按次计费优先显示
+            {isFreeModel ? (
+              // 免费模型 - 绿色
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                  按次计费
-                </Typography>
+                <Chip
+                  label="免费"
+                  size="small"
+                  sx={{
+                    backgroundColor: theme.palette.success.main,
+                    color: 'white',
+                    fontWeight: 600,
+                    mb: 1
+                  }}
+                />
                 <Typography
                   variant="body2"
                   sx={{
-                    fontWeight: 600,
-                    color: theme.palette.primary.main,
-                    fontSize: '0.9rem'
+                    fontSize: '0.85rem',
+                    color: theme.palette.text.primary
                   }}
                 >
-                  ${model.model_ratio_2.toFixed(3)}
+                  无需付费
+                </Typography>
+              </Box>
+            ) : hasPerCallPrice ? (
+              // 按次计费 - 蓝色
+              <Box>
+                <Chip
+                  label="按次计费"
+                  size="small"
+                  sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    color: 'white',
+                    fontWeight: 600,
+                    mb: 1
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: '0.85rem',
+                    color: theme.palette.text.primary,
+                    fontWeight: 500
+                  }}
+                >
+                  {formatPrice(model.model_ratio_2)}/次
                 </Typography>
               </Box>
             ) : hasTokenPrice ? (
-              // Token计费
+              // Token计费 - 橙色
               <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                  Token计费 (每1M)
-                </Typography>
-                <Stack direction="column" spacing={0.5}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: '0.8rem',
-                      color: theme.palette.text.primary
-                    }}
-                  >
-                    输入: {formatNumber(model.model_ratio * 2)}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: '0.8rem',
-                      color: theme.palette.text.primary
-                    }}
-                  >
-                    输出: {formatNumber(model.model_completion_ratio * 2)}
-                  </Typography>
+                <Chip
+                  label="Token计费"
+                  size="small"
+                  sx={{
+                    backgroundColor: theme.palette.warning.main,
+                    color: 'white',
+                    fontWeight: 600,
+                    mb: 1
+                  }}
+                />
+                <Stack direction="column" spacing={0.3}>
+                  {(model.model_ratio !== undefined && model.model_ratio !== null) && (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontSize: '0.75rem',
+                        color: theme.palette.text.primary,
+                        fontWeight: 500
+                      }}
+                    >
+                      输入: {formatNumber(model.model_ratio * 2)}/1M
+                    </Typography>
+                  )}
+                  {(model.model_completion_ratio !== undefined && model.model_completion_ratio !== null) && (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontSize: '0.75rem',
+                        color: theme.palette.text.primary,
+                        fontWeight: 500
+                      }}
+                    >
+                      输出: {formatNumber(model.model_completion_ratio * 2)}/1M
+                    </Typography>
+                  )}
                 </Stack>
               </Box>
-            ) : (
-              // 免费模型
-              <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                  计费方式
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontWeight: 600,
-                    color: theme.palette.success.main,
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  免费
-                </Typography>
-              </Box>
-            )}
+            ) : null}
           </Box>
         </Box>
       </Card>
@@ -431,61 +545,111 @@ export default function ModelPricing() {
 
       {/* 搜索和筛选区域 */}
       <Card sx={{ mb: 4, p: 3 }}>
-        <Stack
-          direction={isMobile ? 'column' : 'row'}
-          spacing={2}
-          alignItems={isMobile ? 'stretch' : 'center'}
-        >
+        <Stack spacing={3}>
           {/* 搜索框 */}
-          <Box sx={{ flex: 1, minWidth: isMobile ? '100%' : 300 }}>
-            <OutlinedInput
-              fullWidth
-              placeholder="搜索模型名称..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-              startAdornment={
-                <InputAdornment position="start">
-                  <IconSearch size={20} color={theme.palette.text.secondary} />
-                </InputAdornment>
-              }
-              sx={{
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: theme.palette.divider,
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: theme.palette.primary.main,
-                },
-              }}
-            />
-          </Box>
-
-          {/* 筛选器 */}
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {filterOptions.map((filter) => (
-              <Chip
-                key={filter.key}
-                icon={filter.icon}
-                label={filter.label}
-                clickable
-                color={activeFilter === filter.key ? 'primary' : 'default'}
-                variant={activeFilter === filter.key ? 'filled' : 'outlined'}
-                onClick={() => setActiveFilter(filter.key)}
-                sx={{
-                  fontWeight: activeFilter === filter.key ? 600 : 400,
-                  '&:hover': {
-                    backgroundColor: activeFilter === filter.key
-                      ? theme.palette.primary.dark
-                      : theme.palette.action.hover,
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ width: isMobile ? '100%' : '400px', maxWidth: '100%' }}>
+              <OutlinedInput
+                fullWidth
+                placeholder="搜索模型名称..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
                   }
                 }}
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconSearch size={20} color={theme.palette.text.secondary} />
+                  </InputAdornment>
+                }
+                sx={{
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                }}
               />
-            ))}
+            </Box>
           </Box>
+
+          {/* 筛选器区域 */}
+          <Stack spacing={2}>
+            {/* 模型类型筛选器 */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, color: theme.palette.text.secondary }}>
+                模型类型
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {filterOptions.map((filter) => (
+                  <Chip
+                    key={filter.key}
+                    icon={filter.icon}
+                    label={filter.label}
+                    clickable
+                    color={activeFilter === filter.key ? 'primary' : 'default'}
+                    variant={activeFilter === filter.key ? 'filled' : 'outlined'}
+                    onClick={() => setActiveFilter(filter.key)}
+                    sx={{
+                      fontWeight: activeFilter === filter.key ? 600 : 400,
+                      px: 2,
+                      py: 1,
+                      height: 'auto',
+                      '& .MuiChip-label': {
+                        px: 1,
+                        py: 0.5,
+                        fontSize: '0.875rem'
+                      },
+                      '&:hover': {
+                        backgroundColor: activeFilter === filter.key
+                          ? theme.palette.primary.dark
+                          : theme.palette.action.hover,
+                      }
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+
+            {/* 计费类型筛选器 */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, color: theme.palette.text.secondary }}>
+                计费类型
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {pricingFilterOptions.map((filter) => (
+                  <Chip
+                    key={filter.key}
+                    icon={filter.icon}
+                    label={filter.label}
+                    clickable
+                    color={activePricingFilter === filter.key ? 'secondary' : 'default'}
+                    variant={activePricingFilter === filter.key ? 'filled' : 'outlined'}
+                    onClick={() => setActivePricingFilter(filter.key)}
+                    sx={{
+                      fontWeight: activePricingFilter === filter.key ? 600 : 400,
+                      px: 2,
+                      py: 1,
+                      height: 'auto',
+                      '& .MuiChip-label': {
+                        px: 1,
+                        py: 0.5,
+                        fontSize: '0.875rem'
+                      },
+                      '&:hover': {
+                        backgroundColor: activePricingFilter === filter.key
+                          ? theme.palette.secondary.dark
+                          : theme.palette.action.hover,
+                      }
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Stack>
         </Stack>
       </Card>
 
@@ -501,6 +665,14 @@ export default function ModelPricing() {
                   label={filterOptions.find(f => f.key === activeFilter)?.label}
                   size="small"
                   color="primary"
+                  sx={{ ml: 1 }}
+                />
+              )}
+              {activePricingFilter !== 'All' && (
+                <Chip
+                  label={pricingFilterOptions.find(f => f.key === activePricingFilter)?.label}
+                  size="small"
+                  color="secondary"
                   sx={{ ml: 1 }}
                 />
               )}
