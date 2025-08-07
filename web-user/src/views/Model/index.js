@@ -11,7 +11,6 @@ import {
   Tooltip,
   Container,
   useMediaQuery,
-  Divider,
   InputAdornment,
   OutlinedInput
 } from '@mui/material';
@@ -343,59 +342,90 @@ export default function ModelPricing() {
 
 
 
-  // 模型卡片组件
+  // 现代化简洁模型卡片组件
   const ModelCard = ({ model }) => {
     // 使用统一的计费类型判断逻辑
     const billingType = getModelBillingType(model);
-    const isFreeModel = billingType === 'Free';
     const hasPerCallPrice = billingType === 'PerCall';
     const hasTokenPrice = billingType === 'Token';
+
+    // 计费标签配置 - 果汁色系
+    const getBillingConfig = () => {
+      if (hasPerCallPrice) {
+        return {
+          label: '按次计费',
+          color: '#7c3aed',      // 紫色果汁
+          bgColor: '#f3f4f6',
+          labelBgColor: '#ede9fe',
+          price: `¥${formatPrice(model.model_ratio_2)}/次`
+        };
+      }
+      if (hasTokenPrice) {
+        return {
+          label: 'Token计费',
+          color: '#f59e0b',      // 橙色果汁
+          bgColor: '#f3f4f6',
+          labelBgColor: '#fef3c7',
+          price: model.model_ratio ? `输入 ¥${formatNumber(model.model_ratio * 2)}/1M` : ''
+        };
+      }
+      return {
+        label: '免费',
+        color: '#10b981',      // 绿色果汁
+        bgColor: '#f3f4f6',
+        labelBgColor: '#d1fae5',
+        price: '无需付费'
+      };
+    };
+
+    const billingConfig = getBillingConfig();
 
     return (
       <Card
         sx={{
           height: '100%',
+          borderRadius: 3,
+          border: '1px solid',
+          borderColor: 'divider',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           display: 'flex',
           flexDirection: 'column',
-          transition: 'all 0.3s ease',
-          border: `1px solid ${theme.palette.divider}`,
           '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: theme.shadows[4],
-            borderColor: theme.palette.primary.main,
-          }
+            borderColor: billingConfig.color,
+            boxShadow: `0 8px 25px ${billingConfig.color}15`,
+            transform: 'translateY(-4px)',
+          },
         }}
       >
-        <Box sx={{ p: 2, flex: 1 }}>
-          {/* 模型名称和图标 */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+        <Box sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {/* 模型名称 - 占据上部空间 */}
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 'auto', pb: 2 }}>
             {getModelIcon(model)}
             <Typography
-              variant="subtitle1"
+              variant="h6"
               sx={{
-                ml: 1,
+                ml: 1.5,
                 fontWeight: 500,
-                fontSize: isMobile ? '0.75rem' : '0.85rem',
-                color: theme.palette.text.primary,
+                fontSize: '12px',
+                color: 'text.primary',
                 flex: 1,
-                lineHeight: 1.2,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
+                lineHeight: 1.4,
+                wordBreak: 'break-word',
               }}
             >
               {model.model}
             </Typography>
-            <Tooltip title="复制模型名称">
+            <Tooltip title="复制模型名称" arrow>
               <IconButton
                 size="small"
                 onClick={() => copyToClipboard(model.model)}
                 sx={{
+                  color: 'text.secondary',
+                  flexShrink: 0,
                   ml: 1,
-                  color: theme.palette.text.secondary,
                   '&:hover': {
-                    color: theme.palette.primary.main,
-                    backgroundColor: theme.palette.action.hover
+                    color: 'text.primary',
+                    backgroundColor: 'action.hover'
                   }
                 }}
               >
@@ -404,98 +434,72 @@ export default function ModelPricing() {
             </Tooltip>
           </Box>
 
-          <Divider sx={{ mb: 1.5 }} />
+          {/* 计费信息 - 固定在底部 */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              p: 1.5,
+              borderRadius: 1,
+              backgroundColor: billingConfig.bgColor,
+              mt: 'auto',
+            }}
+          >
+            {/* 计费标签 */}
+            <Typography
+              variant="caption"
+              sx={{
+                color: billingConfig.color,
+                fontWeight: 500,
+                fontSize: '11px',
+                px: 1,
+                py: 0.25,
+                borderRadius: 0.5,
+                backgroundColor: billingConfig.labelBgColor,
+              }}
+            >
+              {billingConfig.label}
+            </Typography>
 
-          {/* 价格信息 */}
-          <Box>
-            {isFreeModel ? (
-              // 免费模型 - 绿色
-              <Box>
-                <Chip
-                  label="免费"
-                  size="small"
-                  sx={{
-                    backgroundColor: theme.palette.success.main,
-                    color: 'white',
-                    fontWeight: 600,
-                    mb: 1
-                  }}
-                />
+            {/* 价格信息 - Token计费特殊处理 */}
+            {hasTokenPrice ? (
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.25 }}>
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize: '0.85rem',
-                    color: theme.palette.text.primary
+                    color: 'text.primary',
+                    fontWeight: 500,
+                    fontSize: '11px',
                   }}
                 >
-                  无需付费
+                  输入 ¥{formatNumber(model.model_ratio * 2)}/1M
                 </Typography>
+                {model.model_completion_ratio && (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.primary',
+                      fontWeight: 500,
+                      fontSize: '11px',
+                    }}
+                  >
+                    输出 ¥{formatNumber(model.model_completion_ratio * 2)}/1M
+                  </Typography>
+                )}
               </Box>
-            ) : hasPerCallPrice ? (
-              // 按次计费 - 蓝色
-              <Box>
-                <Chip
-                  label="按次计费"
-                  size="small"
-                  sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    color: 'white',
-                    fontWeight: 600,
-                    mb: 1
-                  }}
-                />
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: '0.85rem',
-                    color: theme.palette.text.primary,
-                    fontWeight: 500
-                  }}
-                >
-                  {formatPrice(model.model_ratio_2)}/次
-                </Typography>
-              </Box>
-            ) : hasTokenPrice ? (
-              // Token计费 - 橙色
-              <Box>
-                <Chip
-                  label="Token计费"
-                  size="small"
-                  sx={{
-                    backgroundColor: theme.palette.warning.main,
-                    color: 'white',
-                    fontWeight: 600,
-                    mb: 1
-                  }}
-                />
-                <Stack direction="column" spacing={0.3}>
-                  {(model.model_ratio !== undefined && model.model_ratio !== null) && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontSize: '0.75rem',
-                        color: theme.palette.text.primary,
-                        fontWeight: 500
-                      }}
-                    >
-                      输入: {formatNumber(model.model_ratio * 2)}/1M
-                    </Typography>
-                  )}
-                  {(model.model_completion_ratio !== undefined && model.model_completion_ratio !== null) && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontSize: '0.75rem',
-                        color: theme.palette.text.primary,
-                        fontWeight: 500
-                      }}
-                    >
-                      输出: {formatNumber(model.model_completion_ratio * 2)}/1M
-                    </Typography>
-                  )}
-                </Stack>
-              </Box>
-            ) : null}
+            ) : (
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.primary',
+                  fontWeight: 500,
+                  fontSize: '11px',
+                }}
+              >
+                {billingConfig.price}
+              </Typography>
+            )}
           </Box>
         </Box>
       </Card>
@@ -578,75 +582,132 @@ export default function ModelPricing() {
 
           {/* 筛选器区域 */}
           <Stack spacing={2}>
-            {/* 模型类型筛选器 */}
+            {/* 模型类型筛选器 - 统一样式 */}
             <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1, color: theme.palette.text.secondary }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  mb: 1.5,
+                  color: 'text.primary',
+                  fontWeight: 500,
+                  fontSize: '14px'
+                }}
+              >
                 模型类型
               </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-                {filterOptions.map((filter) => (
-                  <Chip
-                    key={filter.key}
-                    icon={filter.icon}
-                    label={filter.label}
-                    clickable
-                    color={activeFilter === filter.key ? 'primary' : 'default'}
-                    variant={activeFilter === filter.key ? 'filled' : 'outlined'}
-                    onClick={() => setActiveFilter(filter.key)}
-                    sx={{
-                      fontWeight: activeFilter === filter.key ? 600 : 400,
-                      px: 2,
-                      py: 1,
-                      height: 'auto',
-                      '& .MuiChip-label': {
-                        px: 1,
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {filterOptions.map((filter) => {
+                  const isActive = activeFilter === filter.key;
+
+                  return (
+                    <Box
+                      key={filter.key}
+                      onClick={() => setActiveFilter(filter.key)}
+                      sx={{
+                        px: 2,
                         py: 0.5,
-                        fontSize: '0.875rem'
-                      },
-                      '&:hover': {
-                        backgroundColor: activeFilter === filter.key
-                          ? theme.palette.primary.dark
-                          : theme.palette.action.hover,
-                      }
-                    }}
-                  />
-                ))}
+                        borderRadius: 1,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        backgroundColor: isActive ? '#f1f5f9' : 'transparent',
+                        border: `1px solid ${isActive ? '#cbd5e1' : '#e2e8f0'}`,
+                        '&:hover': {
+                          backgroundColor: '#f8fafc',
+                          borderColor: '#cbd5e1',
+                        }
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                        <Box sx={{
+                          color: isActive ? 'text.primary' : 'text.secondary',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}>
+                          {filter.icon}
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: isActive ? 'text.primary' : 'text.secondary',
+                            fontWeight: isActive ? 500 : 400,
+                            fontSize: '13px',
+                          }}
+                        >
+                          {filter.label}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  );
+                })}
               </Box>
             </Box>
 
-            {/* 计费类型筛选器 */}
+            {/* 计费类型筛选器 - 简洁样式 */}
             <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1, color: theme.palette.text.secondary }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  mb: 1.5,
+                  color: 'text.primary',
+                  fontWeight: 500,
+                  fontSize: '14px'
+                }}
+              >
                 计费类型
               </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-                {pricingFilterOptions.map((filter) => (
-                  <Chip
-                    key={filter.key}
-                    icon={filter.icon}
-                    label={filter.label}
-                    clickable
-                    color={activePricingFilter === filter.key ? 'secondary' : 'default'}
-                    variant={activePricingFilter === filter.key ? 'filled' : 'outlined'}
-                    onClick={() => setActivePricingFilter(filter.key)}
-                    sx={{
-                      fontWeight: activePricingFilter === filter.key ? 600 : 400,
-                      px: 2,
-                      py: 1,
-                      height: 'auto',
-                      '& .MuiChip-label': {
-                        px: 1,
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {pricingFilterOptions.map((filter) => {
+                  const isActive = activePricingFilter === filter.key;
+
+                  // 根据筛选器类型设置果汁色
+                  const getFilterColor = () => {
+                    if (filter.key === 'PerCall') return { color: '#7c3aed', bgColor: '#ede9fe' };
+                    if (filter.key === 'Token') return { color: '#f59e0b', bgColor: '#fef3c7' };
+                    if (filter.key === 'Free') return { color: '#10b981', bgColor: '#d1fae5' };
+                    return { color: '#6b7280', bgColor: '#f3f4f6' };
+                  };
+                  const filterColors = getFilterColor();
+
+                  return (
+                    <Box
+                      key={filter.key}
+                      onClick={() => setActivePricingFilter(filter.key)}
+                      sx={{
+                        px: 2,
                         py: 0.5,
-                        fontSize: '0.875rem'
-                      },
-                      '&:hover': {
-                        backgroundColor: activePricingFilter === filter.key
-                          ? theme.palette.secondary.dark
-                          : theme.palette.action.hover,
-                      }
-                    }}
-                  />
-                ))}
+                        borderRadius: 1,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        backgroundColor: isActive ? filterColors.bgColor : 'transparent',
+                        border: `1px solid ${isActive ? filterColors.color : '#e2e8f0'}`,
+                        '&:hover': {
+                          backgroundColor: filterColors.bgColor,
+                          borderColor: filterColors.color,
+                        }
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                        <Box sx={{
+                          color: isActive ? filterColors.color : 'text.secondary',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}>
+                          {filter.icon}
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: isActive ? filterColors.color : 'text.secondary',
+                            fontWeight: isActive ? 500 : 400,
+                            fontSize: '13px',
+                          }}
+                        >
+                          {filter.label}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  );
+                })}
               </Box>
             </Box>
           </Stack>
