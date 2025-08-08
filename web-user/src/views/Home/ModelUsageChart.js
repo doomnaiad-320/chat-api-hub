@@ -451,7 +451,7 @@ const ModelUsageChart = () => {
                       <Button
                         variant='outlined'
                         fullWidth
-                        onClick={() => window.open('/pricing', '_blank')}
+                        onClick={() => window.open('/public-pricing', '_blank')}
                         sx={{
                           borderColor: theme.palette.text.primary,
                           color: theme.palette.text.primary,
