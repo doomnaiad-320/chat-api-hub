@@ -544,6 +544,31 @@ func GetUserModelsBilling(c *gin.Context) {
 	})
 }
 
+func GetPublicModelsBilling(c *gin.Context) {
+	group := "default"
+	search := c.Query("search")
+
+	models, err := model.GetGroupModelsBilling(group, search)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// 在这里获取模型类型
+	for i := range models {
+		models[i].ModelType = getModelType(models[i].Model)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "",
+		"data":    models,
+	})
+}
+
 func UpdateUser(c *gin.Context) {
 	var updatedUser model.User
 	err := json.NewDecoder(c.Request.Body).Decode(&updatedUser)

@@ -105,6 +105,7 @@ const Header = () => {
       >
         <NavButton to="/home">{t('nav.home')}</NavButton>
         <NavButton to="/about">{t('nav.about')}</NavButton>
+        <NavButton to="/pricing">{t('nav.pricing', '模型定价')}</NavButton>
         {chatLink && <NavButton to="/chatweb" chatLink={chatLink}>{t('nav.chat')}</NavButton>}
         <LanguageButton />
         <ThemeButton />

@@ -14,6 +14,7 @@ const Home = Loadable(lazy(() => import('views/Home')));
 const About = Loadable(lazy(() => import('views/About')));
 const Chat = Loadable(lazy(() => import('views/Chat')));
 const NotFoundView = Loadable(lazy(() => import('views/Error')));
+const Pricing = Loadable(lazy(() => import('views/Pricing')));
 
 // ==============================|| AUTHENTICATION ROUTING ||============================== //
 
@@ -28,6 +29,10 @@ const OtherRoutes = {
     {
       path: '/about',
       element: <About />
+    },
+    {
+      path: '/pricing',
+      element: <Pricing />
     },
     {
       path: '/login',
