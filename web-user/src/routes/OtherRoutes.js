@@ -5,11 +5,21 @@ import Loadable from 'ui-component/Loadable';
 import MinimalLayout from 'layout/MinimalLayout';
 
 // login option 3 routing
-const AuthLogin = Loadable(lazy(() => import('views/Authentication/Auth/Login')));
-const AuthRegister = Loadable(lazy(() => import('views/Authentication/Auth/Register')));
-const GitHubOAuth = Loadable(lazy(() => import('views/Authentication/Auth/GitHubOAuth')));
-const ForgetPassword = Loadable(lazy(() => import('views/Authentication/Auth/ForgetPassword')));
-const ResetPassword = Loadable(lazy(() => import('views/Authentication/Auth/ResetPassword')));
+const AuthLogin = Loadable(
+  lazy(() => import('views/Authentication/Auth/Login'))
+);
+const AuthRegister = Loadable(
+  lazy(() => import('views/Authentication/Auth/Register'))
+);
+const GitHubOAuth = Loadable(
+  lazy(() => import('views/Authentication/Auth/GitHubOAuth'))
+);
+const ForgetPassword = Loadable(
+  lazy(() => import('views/Authentication/Auth/ForgetPassword'))
+);
+const ResetPassword = Loadable(
+  lazy(() => import('views/Authentication/Auth/ResetPassword'))
+);
 const Home = Loadable(lazy(() => import('views/Home')));
 const About = Loadable(lazy(() => import('views/About')));
 const Chat = Loadable(lazy(() => import('views/Chat')));
@@ -24,45 +34,45 @@ const OtherRoutes = {
   children: [
     {
       path: '/home',
-      element: <Home />
+      element: <Home />,
     },
     {
       path: '/about',
-      element: <About />
+      element: <About />,
     },
     {
       path: '/pricing',
-      element: <Pricing />
+      element: <Pricing />,
     },
     {
       path: '/login',
-      element: <AuthLogin />
+      element: <AuthLogin />,
     },
     {
       path: '/register',
-      element: <AuthRegister />
+      element: <AuthRegister />,
     },
     {
       path: '/reset',
-      element: <ForgetPassword />
+      element: <ForgetPassword />,
     },
     {
       path: '/user/reset',
-      element: <ResetPassword />
+      element: <ResetPassword />,
     },
     {
       path: '/oauth/github',
-      element: <GitHubOAuth />
+      element: <GitHubOAuth />,
     },
     {
       path: '/chatweb',
-      element: <Chat />
+      element: <Chat />,
     },
     {
       path: '/404',
-      element: <NotFoundView />
-    }
-  ]
+      element: <NotFoundView />,
+    },
+  ],
 };
 
 export default OtherRoutes;

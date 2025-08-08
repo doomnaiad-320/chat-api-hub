@@ -8,7 +8,7 @@ const siteInfoReducer = (state = initialState, action) => {
     case actionTypes.SET_SITE_INFO:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     default:
       return state;

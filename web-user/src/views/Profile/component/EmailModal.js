@@ -12,7 +12,7 @@ import {
   Grid,
   InputAdornment,
   FormControl,
-  FormHelperText
+  FormHelperText,
 } from '@mui/material';
 import { Formik } from 'formik';
 import { showError } from 'utils/common';
@@ -23,7 +23,7 @@ import { API } from 'utils/api';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email('请输入正确的邮箱地址').required('邮箱不能为空'),
-  email_verification_code: Yup.string().required('验证码不能为空')
+  email_verification_code: Yup.string().required('验证码不能为空'),
 });
 
 const commonButtonSx = {
@@ -34,22 +34,27 @@ const commonButtonSx = {
   '&:hover': {
     transform: 'translateY(-2px)',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-  }
+  },
 };
 
-const EmailModal = ({ open, handleClose, turnstileToken, turnstileEnabled}) => {
+const EmailModal = ({
+  open,
+  handleClose,
+  turnstileToken,
+  turnstileEnabled,
+}) => {
   const theme = useTheme();
   const [countdown, setCountdown] = useState(30);
   const [disableButton, setDisableButton] = useState(false);
   const { sendVerificationCode } = useRegister();
   const [loading, setLoading] = useState(false);
 
-
-
   const submit = async (values, { setErrors, setStatus, setSubmitting }) => {
     setLoading(true);
     setSubmitting(true);
-    const res = await API.get(`/api/oauth/email/bind?email=${values.email}&code=${values.email_verification_code}`);
+    const res = await API.get(
+      `/api/oauth/email/bind?email=${values.email}&code=${values.email_verification_code}`
+    );
     const { success, message } = res.data;
     if (success) {
       showSuccess('邮箱账户绑定成功！');
@@ -75,7 +80,6 @@ const EmailModal = ({ open, handleClose, turnstileToken, turnstileEnabled}) => {
     }
     return () => clearInterval(countdownInterval); // Clean up on unmount
   }, [disableButton, countdown]);
-  
 
   const handleSendCode = async (email) => {
     setDisableButton(true);
@@ -88,7 +92,10 @@ const EmailModal = ({ open, handleClose, turnstileToken, turnstileEnabled}) => {
       return;
     }
     setLoading(true);
-    const { success, message } = await sendVerificationCode(email, turnstileToken);
+    const { success, message } = await sendVerificationCode(
+      email,
+      turnstileToken
+    );
     setLoading(false);
     if (!success) {
       showError(message);
@@ -100,106 +107,127 @@ const EmailModal = ({ open, handleClose, turnstileToken, turnstileEnabled}) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>绑定邮箱</DialogTitle>
       <DialogContent>
-        <Grid container direction="column" alignItems="center">
+        <Grid container direction='column' alignItems='center'>
           <Formik
             initialValues={{
               email: '',
-              email_verification_code: ''
+              email_verification_code: '',
             }}
             enableReinitialize
             validationSchema={validationSchema}
             onSubmit={submit}
           >
-            {({ errors, touched, handleBlur, handleChange, handleSubmit, values }) => (
+            {({
+              errors,
+              touched,
+              handleBlur,
+              handleChange,
+              handleSubmit,
+              values,
+            }) => (
               <form noValidate onSubmit={handleSubmit}>
-                <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                  <InputLabel htmlFor="email">Email</InputLabel>
+                <FormControl
+                  fullWidth
+                  error={Boolean(touched.email && errors.email)}
+                  sx={{ ...theme.typography.customInput }}
+                >
+                  <InputLabel htmlFor='email'>Email</InputLabel>
                   <OutlinedInput
-                    id="email"
-                    type="text"
+                    id='email'
+                    type='text'
                     value={values.email}
-                    name="email"
+                    name='email'
                     onBlur={handleBlur}
                     onChange={handleChange}
                     endAdornment={
-                      <InputAdornment position="end">
+                      <InputAdornment position='end'>
                         <Button
-                          variant="contained"
-                          color="primary"
+                          variant='contained'
+                          color='primary'
                           onClick={() => handleSendCode(values.email)}
                           disabled={disableButton || loading}
                           sx={{
                             ...commonButtonSx,
-                            background: disableButton ? 
-                              'linear-gradient(45deg, #9e9e9e 30%, #bdbdbd 90%)' : 
-                              'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                            background: disableButton
+                              ? 'linear-gradient(45deg, #9e9e9e 30%, #bdbdbd 90%)'
+                              : 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                             minWidth: '120px',
                             height: '36px',
-                            ml: 1
+                            ml: 1,
                           }}
                         >
-                          {disableButton ? `重新发送(${countdown})` : '获取验证码'}
+                          {disableButton
+                            ? `重新发送(${countdown})`
+                            : '获取验证码'}
                         </Button>
                       </InputAdornment>
                     }
                     inputProps={{}}
                   />
                   {touched.email && errors.email && (
-                    <FormHelperText error id="helper-email">
+                    <FormHelperText error id='helper-email'>
                       {errors.email}
                     </FormHelperText>
                   )}
                 </FormControl>
                 <FormControl
                   fullWidth
-                  error={Boolean(touched.email_verification_code && errors.email_verification_code)}
+                  error={Boolean(
+                    touched.email_verification_code &&
+                      errors.email_verification_code
+                  )}
                   sx={{ ...theme.typography.customInput }}
                 >
-                  <InputLabel htmlFor="email_verification_code">验证码</InputLabel>
+                  <InputLabel htmlFor='email_verification_code'>
+                    验证码
+                  </InputLabel>
                   <OutlinedInput
-                    id="email_verification_code"
-                    type="text"
+                    id='email_verification_code'
+                    type='text'
                     value={values.email_verification_code}
-                    name="email_verification_code"
+                    name='email_verification_code'
                     onBlur={handleBlur}
                     onChange={handleChange}
                     inputProps={{}}
                   />
-                  {touched.email_verification_code && errors.email_verification_code && (
-                    <FormHelperText error id="helper-email_verification_code">
-                      {errors.email_verification_code}
-                    </FormHelperText>
-                  )}
+                  {touched.email_verification_code &&
+                    errors.email_verification_code && (
+                      <FormHelperText error id='helper-email_verification_code'>
+                        {errors.email_verification_code}
+                      </FormHelperText>
+                    )}
                 </FormControl>
                 <DialogActions>
-                  <Button 
+                  <Button
                     onClick={handleClose}
                     sx={{
                       ...commonButtonSx,
                       color: 'text.secondary',
                       '&:hover': {
                         ...commonButtonSx['&:hover'],
-                        background: 'rgba(0, 0, 0, 0.04)'
-                      }
+                        background: 'rgba(0, 0, 0, 0.04)',
+                      },
                     }}
                   >
                     取消
                   </Button>
-                  <Button 
-                    disableElevation 
-                    disabled={loading} 
-                    type="submit" 
-                    variant="contained" 
-                    color="primary"
+                  <Button
+                    disableElevation
+                    disabled={loading}
+                    type='submit'
+                    variant='contained'
+                    color='primary'
                     sx={{
                       ...commonButtonSx,
-                      background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                      background:
+                        'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                       color: 'white',
                       opacity: loading ? 0.7 : 1,
                       '&:disabled': {
-                        background: 'linear-gradient(45deg, #9e9e9e 30%, #bdbdbd 90%)',
-                        color: 'rgba(255, 255, 255, 0.8)'
-                      }
+                        background:
+                          'linear-gradient(45deg, #9e9e9e 30%, #bdbdbd 90%)',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      },
                     }}
                   >
                     提交
@@ -218,5 +246,5 @@ export default EmailModal;
 
 EmailModal.propTypes = {
   open: PropTypes.bool,
-  handleClose: PropTypes.func
+  handleClose: PropTypes.func,
 };

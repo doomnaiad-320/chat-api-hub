@@ -28,31 +28,36 @@ const Chat = () => {
   }, []); // 空数组意味着这个 effect 只在组件挂载时运行一次
 
   return (
-    <Container maxWidth="xl" sx={{ 
-      height: '93vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center' 
-    }}>
-      <Box sx={{ 
-        width: '100%', 
-        height: '85vh', 
-        maxWidth: '2000px', 
-        maxHeight: '1100px', 
-        boxShadow: 3, 
-        borderRadius: 2, 
-        overflow: 'hidden'
-      }}>
+    <Container
+      maxWidth='xl'
+      sx={{
+        height: '93vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          height: '85vh',
+          maxWidth: '2000px',
+          maxHeight: '1100px',
+          boxShadow: 3,
+          borderRadius: 2,
+          overflow: 'hidden',
+        }}
+      >
         {chatLink && (
-          <iframe 
+          <iframe
             src={chatLink}
-            title="ChatGPT Web"
-            style={{ 
-              width: '100%', 
-              height: '100%', 
+            title='ChatGPT Web'
+            style={{
+              width: '100%',
+              height: '100%',
               border: 'none',
             }}
-            allow="fullscreen"
+            allow='fullscreen'
           />
         )}
       </Box>

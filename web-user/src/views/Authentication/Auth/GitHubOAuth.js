@@ -5,7 +5,13 @@ import useLogin from 'hooks/useLogin';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Stack, Typography, useMediaQuery, CircularProgress } from '@mui/material';
+import {
+  Grid,
+  Stack,
+  Typography,
+  useMediaQuery,
+  CircularProgress,
+} from '@mui/material';
 
 // project imports
 import AuthWrapper from '../AuthWrapper';
@@ -53,31 +59,62 @@ const GitHubOAuth = () => {
 
   return (
     <AuthWrapper>
-      <Grid container direction="column" justifyContent="flex-end">
+      <Grid container direction='column' justifyContent='flex-end'>
         <Grid item xs={12}>
-          <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 136px)' }}>
+          <Grid
+            container
+            justifyContent='center'
+            alignItems='center'
+            sx={{ minHeight: 'calc(100vh - 136px)' }}
+          >
             <Grid item sx={{ m: { xs: 1, sm: 3 }, mb: 0 }}>
               <AuthCardWrapper>
-                <Grid container spacing={2} alignItems="center" justifyContent="center">
+                <Grid
+                  container
+                  spacing={2}
+                  alignItems='center'
+                  justifyContent='center'
+                >
                   <Grid item sx={{ mb: 3 }}>
-                    <Link to="#">
+                    <Link to='#'>
                       <Logo />
                     </Link>
                   </Grid>
                   <Grid item xs={12}>
-                    <Grid container direction={matchDownSM ? 'column-reverse' : 'row'} alignItems="center" justifyContent="center">
+                    <Grid
+                      container
+                      direction={matchDownSM ? 'column-reverse' : 'row'}
+                      alignItems='center'
+                      justifyContent='center'
+                    >
                       <Grid item>
-                        <Stack alignItems="center" justifyContent="center" spacing={1}>
-                          <Typography color={theme.palette.primary.main} gutterBottom variant={matchDownSM ? 'h3' : 'h2'}>
+                        <Stack
+                          alignItems='center'
+                          justifyContent='center'
+                          spacing={1}
+                        >
+                          <Typography
+                            color={theme.palette.primary.main}
+                            gutterBottom
+                            variant={matchDownSM ? 'h3' : 'h2'}
+                          >
                             GitHub 登录
                           </Typography>
                         </Stack>
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item xs={12} container direction="column" justifyContent="center" alignItems="center" style={{ height: '200px' }}>
+                  <Grid
+                    item
+                    xs={12}
+                    container
+                    direction='column'
+                    justifyContent='center'
+                    alignItems='center'
+                    style={{ height: '200px' }}
+                  >
                     <CircularProgress />
-                    <Typography variant="h3" paddingTop={'20px'}>
+                    <Typography variant='h3' paddingTop={'20px'}>
                       {prompt}
                     </Typography>
                   </Grid>

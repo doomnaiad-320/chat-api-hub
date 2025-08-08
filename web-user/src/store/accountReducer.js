@@ -1,7 +1,7 @@
 import * as actionTypes from './actions';
 
 export const initialState = {
-  user: undefined
+  user: undefined,
 };
 
 const accountReducer = (state = initialState, action) => {
@@ -9,12 +9,12 @@ const accountReducer = (state = initialState, action) => {
     case actionTypes.LOGIN:
       return {
         ...state,
-        user: action.payload
+        user: action.payload,
       };
     case actionTypes.LOGOUT:
       return {
         ...state,
-        user: undefined
+        user: undefined,
       };
     default:
       return state;

@@ -4,7 +4,7 @@ import panel from './panel';
 
 const menuItems = {
   items: [panel],
-  urlMap: {}
+  urlMap: {},
 };
 
 // Initialize urlMap

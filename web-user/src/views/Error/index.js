@@ -24,20 +24,20 @@ export default function NotFoundView() {
             textAlign: 'center',
             alignItems: 'center',
             flexDirection: 'column',
-            justifyContent: 'center'
+            justifyContent: 'center',
           }}
         >
           <Box
-            component="img"
+            component='img'
             src={NotFound}
             sx={{
               mx: 'auto',
               height: 260,
-              my: { xs: 5, sm: 10 }
+              my: { xs: 5, sm: 10 },
             }}
           />
 
-          <Button size="large" variant="contained" onClick={goBack}>
+          <Button size='large' variant='contained' onClick={goBack}>
             返回
           </Button>
         </Box>

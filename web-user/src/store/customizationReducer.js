@@ -10,7 +10,7 @@ export const initialState = {
   fontFamily: config.fontFamily,
   borderRadius: config.borderRadius,
   opened: true,
-  theme: 'light'
+  theme: 'light',
 };
 
 // ==============================|| CUSTOMIZATION REDUCER ||============================== //
@@ -22,27 +22,27 @@ const customizationReducer = (state = initialState, action) => {
       id = action.id;
       return {
         ...state,
-        isOpen: [id]
+        isOpen: [id],
       };
     case actionTypes.SET_MENU:
       return {
         ...state,
-        opened: action.opened
+        opened: action.opened,
       };
     case actionTypes.SET_FONT_FAMILY:
       return {
         ...state,
-        fontFamily: action.fontFamily
+        fontFamily: action.fontFamily,
       };
     case actionTypes.SET_BORDER_RADIUS:
       return {
         ...state,
-        borderRadius: action.borderRadius
+        borderRadius: action.borderRadius,
       };
     case actionTypes.SET_THEME:
       return {
         ...state,
-        theme: action.theme
+        theme: action.theme,
       };
     default:
       return state;

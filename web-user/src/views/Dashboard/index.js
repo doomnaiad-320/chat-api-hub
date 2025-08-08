@@ -16,13 +16,18 @@ import { useTheme } from '@mui/material/styles';
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [statisticalData, setStatisticalData] = useState({ data: [], xaxis: [] });
+  const [statisticalData, setStatisticalData] = useState({
+    data: [],
+    xaxis: [],
+  });
   const [requestChart, setRequestChart] = useState(null);
   const [quotaChart, setQuotaChart] = useState(null);
   const [tokenChart, setTokenChart] = useState(null);
   const [users, setUsers] = useState([]);
   const account = useSelector((state) => state.account);
-  const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 7)));
+  const [startDate, setStartDate] = useState(
+    new Date(new Date().setDate(new Date().getDate() - 7))
+  );
   const [endDate, setEndDate] = useState(new Date());
   const theme = useTheme();
   const [rawData, setRawData] = useState([]);
@@ -32,7 +37,9 @@ const Dashboard = () => {
     try {
       const startTimestamp = Math.floor(startDate.getTime() / 1000);
       const endTimestamp = Math.floor(endDate.getTime() / 1000);
-      const res = await API.get(`/api/user/dashboard?start=${startTimestamp}&end=${endTimestamp}`);
+      const res = await API.get(
+        `/api/user/dashboard?start=${startTimestamp}&end=${endTimestamp}`
+      );
       const { success, data } = res.data;
       if (success && Array.isArray(data)) {
         setRawData(data);
@@ -100,7 +107,7 @@ const Dashboard = () => {
             <StatisticalLineChartCard
               isLoading={isLoading}
               isRefreshing={isRefreshing}
-              title="今日请求量"
+              title='今日请求量'
               chartData={requestChart?.chartData}
               todayValue={requestChart?.todayValue}
               color={theme.palette.primary.main}
@@ -110,7 +117,7 @@ const Dashboard = () => {
             <StatisticalLineChartCard
               isLoading={isLoading}
               isRefreshing={isRefreshing}
-              title="今日消费"
+              title='今日消费'
               chartData={quotaChart?.chartData}
               todayValue={quotaChart?.todayValue}
               color={theme.palette.secondary.main}
@@ -120,7 +127,7 @@ const Dashboard = () => {
             <StatisticalLineChartCard
               isLoading={isLoading}
               isRefreshing={isRefreshing}
-              title="今日Token"
+              title='今日Token'
               chartData={tokenChart?.chartData}
               todayValue={tokenChart?.todayValue}
               color={theme.palette.success.dark}
@@ -131,10 +138,10 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item lg={8} xs={12}>
-            <StatisticalBarChart 
+            <StatisticalBarChart
               isLoading={isLoading}
               isRefreshing={isRefreshing}
-              chartDatas={statisticalData} 
+              chartDatas={statisticalData}
               startDate={startDate}
               endDate={endDate}
               onDateChange={handleDateChange}
@@ -142,16 +149,16 @@ const Dashboard = () => {
           </Grid>
           <Grid item lg={4} xs={12}>
             <UserCard>
-              <Grid 
-                container 
-                spacing={3} 
+              <Grid
+                container
+                spacing={3}
                 sx={{
                   p: 3,
                   '& .MuiGrid-item': {
                     display: 'flex',
                     alignItems: 'center',
-                    width: '100%'
-                  }
+                    width: '100%',
+                  },
                 }}
               >
                 <Grid item xs={12}>
@@ -160,15 +167,17 @@ const Dashboard = () => {
                       display: 'flex',
                       width: '100%',
                       alignItems: 'center',
-                      bgcolor: theme.palette.mode === 'dark' 
-                        ? 'rgba(94, 53, 177, 0.15)' 
-                        : 'rgba(94, 53, 177, 0.08)',
+                      bgcolor:
+                        theme.palette.mode === 'dark'
+                          ? 'rgba(94, 53, 177, 0.15)'
+                          : 'rgba(94, 53, 177, 0.08)',
                       borderRadius: 2,
                       p: 2.5,
                       boxShadow: theme.shadows[2],
-                      border: theme.palette.mode === 'dark'
-                        ? `1px solid ${theme.palette.primary.dark}`
-                        : `1px solid ${theme.palette.primary.light}`,
+                      border:
+                        theme.palette.mode === 'dark'
+                          ? `1px solid ${theme.palette.primary.dark}`
+                          : `1px solid ${theme.palette.primary.light}`,
                       '&::before': {
                         content: '""',
                         position: 'absolute',
@@ -179,18 +188,27 @@ const Dashboard = () => {
                         borderRadius: 2,
                         padding: '1px',
                         background: `linear-gradient(to bottom right, ${theme.palette.primary.light}, transparent)`,
-                        WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                        WebkitMask:
+                          'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                         WebkitMaskComposite: 'xor',
                         maskComposite: 'exclude',
-                        pointerEvents: 'none'
+                        pointerEvents: 'none',
                       },
                       position: 'relative',
                     }}
                   >
-                    <AccountBalanceWalletIcon sx={{ fontSize: 48, color: 'primary.main', mr: 2.5 }} />
+                    <AccountBalanceWalletIcon
+                      sx={{ fontSize: 48, color: 'primary.main', mr: 2.5 }}
+                    />
                     <Box>
-                      <Typography variant="body1" color="textSecondary">余额</Typography>
-                      <Typography variant="h3" color="primary" sx={{ fontWeight: 600 }}>
+                      <Typography variant='body1' color='textSecondary'>
+                        余额
+                      </Typography>
+                      <Typography
+                        variant='h3'
+                        color='primary'
+                        sx={{ fontWeight: 600 }}
+                      >
                         {isLoading ? (
                           <Skeleton width={120} height={30} />
                         ) : (
@@ -207,17 +225,30 @@ const Dashboard = () => {
                       display: 'flex',
                       width: '100%',
                       alignItems: 'center',
-                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.paper : 'rgba(245, 124, 0, 0.08)',
+                      bgcolor:
+                        theme.palette.mode === 'dark'
+                          ? theme.palette.background.paper
+                          : 'rgba(245, 124, 0, 0.08)',
                       borderRadius: 2,
                       p: 2,
                       boxShadow: theme.shadows[1],
-                      border: theme.palette.mode === 'dark' ? `1px solid ${theme.palette.divider}` : 'none'
+                      border:
+                        theme.palette.mode === 'dark'
+                          ? `1px solid ${theme.palette.divider}`
+                          : 'none',
                     }}
                   >
-                    <PaymentsIcon sx={{ fontSize: 36, color: 'orange.main', mr: 2 }} />
+                    <PaymentsIcon
+                      sx={{ fontSize: 36, color: 'orange.main', mr: 2 }}
+                    />
                     <Box>
-                      <Typography variant="body2" color="textSecondary">已使用</Typography>
-                      <Typography variant="h5" sx={{ color: 'rgb(245, 124, 0)', fontWeight: 500 }}>
+                      <Typography variant='body2' color='textSecondary'>
+                        已使用
+                      </Typography>
+                      <Typography
+                        variant='h5'
+                        sx={{ color: 'rgb(245, 124, 0)', fontWeight: 500 }}
+                      >
                         {isLoading ? (
                           <Skeleton width={90} height={24} />
                         ) : (
@@ -234,17 +265,31 @@ const Dashboard = () => {
                       display: 'flex',
                       width: '100%',
                       alignItems: 'center',
-                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.paper : 'rgba(0, 200, 83, 0.08)',
+                      bgcolor:
+                        theme.palette.mode === 'dark'
+                          ? theme.palette.background.paper
+                          : 'rgba(0, 200, 83, 0.08)',
                       borderRadius: 2,
                       p: 2,
                       boxShadow: theme.shadows[1],
-                      border: theme.palette.mode === 'dark' ? `1px solid ${theme.palette.divider}` : 'none'
+                      border:
+                        theme.palette.mode === 'dark'
+                          ? `1px solid ${theme.palette.divider}`
+                          : 'none',
                     }}
                   >
-                    <ApiIcon sx={{ fontSize: 36, color: 'success.main', mr: 2 }} />
+                    <ApiIcon
+                      sx={{ fontSize: 36, color: 'success.main', mr: 2 }}
+                    />
                     <Box>
-                      <Typography variant="body2" color="textSecondary">调用次数</Typography>
-                      <Typography variant="h5" color="success.main" sx={{ fontWeight: 500 }}>
+                      <Typography variant='body2' color='textSecondary'>
+                        调用次数
+                      </Typography>
+                      <Typography
+                        variant='h5'
+                        color='success.main'
+                        sx={{ fontWeight: 500 }}
+                      >
                         {isLoading ? (
                           <Skeleton width={90} height={24} />
                         ) : (
@@ -273,7 +318,7 @@ const getLineDataGroup = (statisticalData, startDate, endDate) => {
         RequestCount: 0,
         Quota: 0,
         PromptTokens: 0,
-        CompletionTokens: 0
+        CompletionTokens: 0,
       };
     }
     acc[cur.Day].RequestCount += cur.RequestCount;
@@ -291,7 +336,7 @@ const getLineDataGroup = (statisticalData, startDate, endDate) => {
         RequestCount: 0,
         Quota: 0,
         PromptTokens: 0,
-        CompletionTokens: 0
+        CompletionTokens: 0,
       };
     } else {
       return groupedData[day];
@@ -306,7 +351,10 @@ const getBarDataGroup = (data, startDate, endDate) => {
 
   for (const item of data) {
     if (!map.has(item.ModelName)) {
-      const newData = { name: item.ModelName, data: new Array(days.length).fill(0) };
+      const newData = {
+        name: item.ModelName,
+        data: new Array(days.length).fill(0),
+      };
       map.set(item.ModelName, newData);
       result.push(newData);
     }
@@ -332,7 +380,7 @@ const getLineCardOption = (lineDataGroup, field, theme) => {
   const lineData = lineDataGroup.map((item) => {
     const tmp = {
       date: item.date,
-      value: item[field]
+      value: item[field],
     };
     if (field === 'Quota') {
       tmp.value = calculateQuota(item.Quota);

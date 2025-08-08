@@ -10,7 +10,7 @@ import siteInfoReducer from './siteInfoReducer';
 const reducer = combineReducers({
   customization: customizationReducer,
   account: accountReducer,
-  siteInfo: siteInfoReducer
+  siteInfo: siteInfoReducer,
 });
 
 export default reducer;

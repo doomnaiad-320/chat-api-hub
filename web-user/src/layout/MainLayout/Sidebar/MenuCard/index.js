@@ -13,7 +13,9 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Typography,Box,Chip 
+  Typography,
+  Box,
+  Chip,
   // linearProgressClasses
 } from '@mui/material';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -21,7 +23,6 @@ import User1 from 'assets/images/users/user-round.svg';
 import { useNavigate } from 'react-router-dom';
 import { API } from 'utils/api';
 import { calculateQuota } from 'utils/common';
-
 
 const CardStyle = styled(Card)(({ theme }) => ({
   background: theme.typography.menuChip.background,
@@ -36,10 +37,9 @@ const CardStyle = styled(Card)(({ theme }) => ({
     background: theme.palette.primary[200],
     borderRadius: '50%',
     top: '-105px',
-    right: '-96px'
-  }
+    right: '-96px',
+  },
 }));
-
 
 const MenuCard = () => {
   const theme = useTheme();
@@ -61,16 +61,16 @@ const MenuCard = () => {
     if (account.user) {
       loadUser().then();
     }
-  }, [account.user?.username]); 
-  
+  }, [account.user?.username]);
+
   return (
     <CardStyle>
       <CardContent sx={{ p: 2 }}>
         <List sx={{ p: 0, m: 0 }}>
-          <ListItem alignItems="flex-start" disableGutters sx={{ p: 0 }}>
+          <ListItem alignItems='flex-start' disableGutters sx={{ p: 0 }}>
             <ListItemAvatar sx={{ mt: 0 }}>
               <Avatar
-                variant="rounded"
+                variant='rounded'
                 src={User1}
                 sx={{
                   ...theme.typography.commonAvatar,
@@ -79,7 +79,7 @@ const MenuCard = () => {
                   border: 'none',
                   borderColor: theme.palette.primary.main,
                   background: '#fff',
-                  marginRight: '12px'
+                  marginRight: '12px',
                 }}
                 onClick={() => navigate('/profile')}
               ></Avatar>
@@ -87,35 +87,29 @@ const MenuCard = () => {
             <ListItemText
               sx={{ mt: 0 }}
               primary={
-                <Typography variant="subtitle1" >
-                  <Box >
-                    <Chip 
-                      sx={{ cursor: 'pointer' }} 
-                      label={`${account.user?.username} - ${inputs.group}`} 
-                      color="primary"
-                      size="small"
-                      variant="outlined"
+                <Typography variant='subtitle1'>
+                  <Box>
+                    <Chip
+                      sx={{ cursor: 'pointer' }}
+                      label={`${account.user?.username} - ${inputs.group}`}
+                      color='primary'
+                      size='small'
+                      variant='outlined'
                       type='ghost'
-                      onClick={() => navigate('/profile')}>
-                      
-                    </Chip>
+                      onClick={() => navigate('/profile')}
+                    ></Chip>
                   </Box>
-                  
                 </Typography>
               }
               secondary={
-                <Typography
-                  sx={{ mt: 1, display: 'flex' }}
-                  variant="subtitle1"
-                >
+                <Typography sx={{ mt: 1, display: 'flex' }} variant='subtitle1'>
                   <Chip
                     icon={<MonetizationOnIcon />} // 在Chip内部使用图标
                     label={calculateQuota(inputs.quota)}
-                    size="small"
-                    variant="outlined" // 设置变体，使其看起来更像按钮
+                    size='small'
+                    variant='outlined' // 设置变体，使其看起来更像按钮
                     sx={{ cursor: 'pointer' }} // 进一步强调可点击的视觉效果
                   />
-
                 </Typography>
               }
             />

@@ -7,7 +7,11 @@ export function getLastSevenDays() {
     const day = '' + d.getDate();
     const year = d.getFullYear();
 
-    const formattedDate = [year, month.padStart(2, '0'), day.padStart(2, '0')].join('-');
+    const formattedDate = [
+      year,
+      month.padStart(2, '0'),
+      day.padStart(2, '0'),
+    ].join('-');
     dates.push(formattedDate);
   }
   return dates;
@@ -41,53 +45,57 @@ export function generateChartOptions(data, unit, theme) {
   return {
     series: [
       {
-        data: values
-      }
+        data: values,
+      },
     ],
     type: 'line',
     height: 90,
     options: {
       chart: {
         sparkline: {
-          enabled: true
+          enabled: true,
         },
-        background: 'transparent'
+        background: 'transparent',
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
-      colors: [theme.palette.mode === 'dark' ? '#fff' : theme.palette.error.main],
+      colors: [
+        theme.palette.mode === 'dark' ? '#fff' : theme.palette.error.main,
+      ],
       fill: {
         type: 'solid',
-        opacity: 1
+        opacity: 1,
       },
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: [theme.palette.mode === 'dark' ? '#fff' : theme.palette.error.main]
+        colors: [
+          theme.palette.mode === 'dark' ? '#fff' : theme.palette.error.main,
+        ],
       },
       xaxis: {
         categories: dates,
         labels: {
-          show: false
+          show: false,
         },
         min: minDate,
-        max: maxDate
+        max: maxDate,
       },
       yaxis: {
         min: minValue,
         max: maxValue,
         labels: {
-          show: false
-        }
+          show: false,
+        },
       },
       tooltip: {
         theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
         fixed: {
-          enabled: false
+          enabled: false,
         },
         x: {
-          format: 'yyyy-MM-dd'
+          format: 'yyyy-MM-dd',
         },
         y: {
           formatter: function (val) {
@@ -96,13 +104,13 @@ export function generateChartOptions(data, unit, theme) {
           title: {
             formatter: function () {
               return '';
-            }
-          }
+            },
+          },
         },
         marker: {
-          show: false
-        }
-      }
-    }
+          show: false,
+        },
+      },
+    },
   };
 }

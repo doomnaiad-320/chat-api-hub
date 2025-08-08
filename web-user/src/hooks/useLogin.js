@@ -6,19 +6,26 @@ import { showSuccess } from 'utils/common';
 const useLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
 
-  const login = async (username, password,turnstileEnabled,turnstileToken) => {
+  const login = async (
+    username,
+    password,
+    turnstileEnabled,
+    turnstileToken
+  ) => {
     if (turnstileEnabled && turnstileToken === '') {
       showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
       return;
     }
-    
+
     try {
-      const res = await API.post(`/api/user/login?turnstile=${turnstileToken}`, {
-        username,
-        password
-      });
+      const res = await API.post(
+        `/api/user/login?turnstile=${turnstileToken}`,
+        {
+          username,
+          password,
+        }
+      );
       const { success, message, data } = res.data;
       if (success) {
         localStorage.setItem('user', JSON.stringify(data));
@@ -34,7 +41,9 @@ const useLogin = () => {
 
   const githubLogin = async (code, state) => {
     try {
-      const res = await API.get(`/api/oauth/github?code=${code}&state=${state}`);
+      const res = await API.get(
+        `/api/oauth/github?code=${code}&state=${state}`
+      );
       const { success, message, data } = res.data;
       if (success) {
         if (message === 'bind') {

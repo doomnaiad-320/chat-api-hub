@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Link,useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -17,7 +17,7 @@ import {
   OutlinedInput,
   Stack,
   Typography,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 
 // third party
@@ -36,7 +36,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Github from 'assets/images/icons/github.svg';
 import Wechat from 'assets/images/icons/wechat.svg';
 import { onGitHubOAuthClicked } from 'utils/common';
-import Turnstile from "react-turnstile";
+import Turnstile from 'react-turnstile';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const LoginForm = ({ ...others }) => {
@@ -53,15 +53,15 @@ const LoginForm = ({ ...others }) => {
   const status = useSelector((state) => state.siteInfo);
   // const [checked, setChecked] = useState(true);
   useEffect(() => {
-      if (searchParams.get('expired')) {
-          showError('未登录或登录已过期，请重新登录！');
+    if (searchParams.get('expired')) {
+      showError('未登录或登录已过期，请重新登录！');
+    }
+    if (status) {
+      if (status.turnstile_check) {
+        setTurnstileEnabled(true);
+        setTurnstileSiteKey(status.turnstile_site_key);
       }
-      if (status) {
-          if (status.turnstile_check) {
-              setTurnstileEnabled(true);
-              setTurnstileSiteKey(status.turnstile_site_key);
-          }
-      }
+    }
   }, []);
 
   let tripartiteLogin = false;
@@ -85,29 +85,42 @@ const LoginForm = ({ ...others }) => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  
 
   return (
     <>
       {tripartiteLogin && (
-        <Grid container direction="column" justifyContent="center" spacing={2}>
+        <Grid container direction='column' justifyContent='center' spacing={2}>
           {siteInfo.github_oauth && (
             <Grid item xs={12}>
               <AnimateButton>
                 <Button
                   disableElevation
                   fullWidth
-                  onClick={() => onGitHubOAuthClicked(siteInfo.github_client_id)}
-                  size="large"
-                  variant="outlined"
+                  onClick={() =>
+                    onGitHubOAuthClicked(siteInfo.github_client_id)
+                  }
+                  size='large'
+                  variant='outlined'
                   sx={{
                     color: 'grey.700',
                     backgroundColor: theme.palette.grey[50],
-                    borderColor: theme.palette.grey[100]
+                    borderColor: theme.palette.grey[100],
                   }}
                 >
-                  <Box sx={{ mr: { xs: 1, sm: 2, width: 20 }, display: 'flex', alignItems: 'center' }}>
-                    <img src={Github} alt="github" width={25} height={25} style={{ marginRight: matchDownSM ? 8 : 16 }} />
+                  <Box
+                    sx={{
+                      mr: { xs: 1, sm: 2, width: 20 },
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <img
+                      src={Github}
+                      alt='github'
+                      width={25}
+                      height={25}
+                      style={{ marginRight: matchDownSM ? 8 : 16 }}
+                    />
                   </Box>
                   使用 Github 登录
                 </Button>
@@ -121,34 +134,51 @@ const LoginForm = ({ ...others }) => {
                   disableElevation
                   fullWidth
                   onClick={handleWechatOpen}
-                  size="large"
-                  variant="outlined"
+                  size='large'
+                  variant='outlined'
                   sx={{
                     color: 'grey.700',
                     backgroundColor: theme.palette.grey[50],
-                    borderColor: theme.palette.grey[100]
+                    borderColor: theme.palette.grey[100],
                   }}
                 >
-                  <Box sx={{ mr: { xs: 1, sm: 2, width: 20 }, display: 'flex', alignItems: 'center' }}>
-                    <img src={Wechat} alt="Wechat" width={25} height={25} style={{ marginRight: matchDownSM ? 8 : 16 }} />
+                  <Box
+                    sx={{
+                      mr: { xs: 1, sm: 2, width: 20 },
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <img
+                      src={Wechat}
+                      alt='Wechat'
+                      width={25}
+                      height={25}
+                      style={{ marginRight: matchDownSM ? 8 : 16 }}
+                    />
                   </Box>
                   使用 Wechat 登录
                 </Button>
               </AnimateButton>
-              <WechatModal open={openWechat} handleClose={handleWechatClose} wechatLogin={wechatLogin} qrCode={siteInfo.wechat_qrcode} />
+              <WechatModal
+                open={openWechat}
+                handleClose={handleWechatClose}
+                wechatLogin={wechatLogin}
+                qrCode={siteInfo.wechat_qrcode}
+              />
             </Grid>
           )}
           <Grid item xs={12}>
             <Box
               sx={{
                 alignItems: 'center',
-                display: 'flex'
+                display: 'flex',
               }}
             >
-              <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
+              <Divider sx={{ flexGrow: 1 }} orientation='horizontal' />
 
               <Button
-                variant="outlined"
+                variant='outlined'
                 sx={{
                   cursor: 'unset',
                   m: 2,
@@ -157,7 +187,7 @@ const LoginForm = ({ ...others }) => {
                   borderColor: `${theme.palette.grey[100]} !important`,
                   color: `${theme.palette.grey[900]}!important`,
                   fontWeight: 500,
-                  borderRadius: `${customization.borderRadius}px`
+                  borderRadius: `${customization.borderRadius}px`,
                 }}
                 disableRipple
                 disabled
@@ -165,7 +195,7 @@ const LoginForm = ({ ...others }) => {
                 OR
               </Button>
 
-              <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
+              <Divider sx={{ flexGrow: 1 }} orientation='horizontal' />
             </Box>
           </Grid>
         </Grid>
@@ -175,14 +205,19 @@ const LoginForm = ({ ...others }) => {
         initialValues={{
           username: '',
           password: '',
-          submit: null
+          submit: null,
         }}
         validationSchema={Yup.object().shape({
           username: Yup.string().max(255).required('Username is required'),
-          password: Yup.string().max(255).required('Password is required')
+          password: Yup.string().max(255).required('Password is required'),
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          const { success, message } = await login(values.username, values.password,turnstileEnabled,turnstileToken);
+          const { success, message } = await login(
+            values.username,
+            values.password,
+            turnstileEnabled,
+            turnstileToken
+          );
           if (success) {
             setStatus({ success: true });
           } else {
@@ -194,58 +229,89 @@ const LoginForm = ({ ...others }) => {
           setSubmitting(false);
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({
+          errors,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          isSubmitting,
+          touched,
+          values,
+        }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
-            <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-username-login">用户名 / 邮箱地址</InputLabel>
+            <FormControl
+              fullWidth
+              error={Boolean(touched.username && errors.username)}
+              sx={{ ...theme.typography.customInput }}
+            >
+              <InputLabel htmlFor='outlined-adornment-username-login'>
+                用户名 / 邮箱地址
+              </InputLabel>
               <OutlinedInput
-                id="outlined-adornment-username-login"
-                type="text"
+                id='outlined-adornment-username-login'
+                type='text'
                 value={values.username}
-                name="username"
+                name='username'
                 onBlur={handleBlur}
                 onChange={handleChange}
-                label="用户名 / 邮箱地址"
+                label='用户名 / 邮箱地址'
                 inputProps={{ autoComplete: 'username' }}
               />
               {touched.username && errors.username && (
-                <FormHelperText error id="standard-weight-helper-text-username-login">
+                <FormHelperText
+                  error
+                  id='standard-weight-helper-text-username-login'
+                >
                   {errors.username}
                 </FormHelperText>
               )}
             </FormControl>
 
-            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-login">密码</InputLabel>
+            <FormControl
+              fullWidth
+              error={Boolean(touched.password && errors.password)}
+              sx={{ ...theme.typography.customInput }}
+            >
+              <InputLabel htmlFor='outlined-adornment-password-login'>
+                密码
+              </InputLabel>
               <OutlinedInput
-                id="outlined-adornment-password-login"
+                id='outlined-adornment-password-login'
                 type={showPassword ? 'text' : 'password'}
                 value={values.password}
-                name="password"
+                name='password'
                 onBlur={handleBlur}
                 onChange={handleChange}
                 endAdornment={
-                  <InputAdornment position="end">
+                  <InputAdornment position='end'>
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label='toggle password visibility'
                       onClick={handleClickShowPassword}
                       onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                      size="large"
+                      edge='end'
+                      size='large'
                     >
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
                 }
-                label="Password"
+                label='Password'
               />
               {touched.password && errors.password && (
-                <FormHelperText error id="standard-weight-helper-text-password-login">
+                <FormHelperText
+                  error
+                  id='standard-weight-helper-text-password-login'
+                >
                   {errors.password}
                 </FormHelperText>
               )}
             </FormControl>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+            <Stack
+              direction='row'
+              alignItems='center'
+              justifyContent='space-between'
+              spacing={1}
+            >
               {/* <FormControlLabel
                 control={
                   <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
@@ -254,9 +320,9 @@ const LoginForm = ({ ...others }) => {
               /> */}
               <Typography
                 component={Link}
-                to="/reset"
-                variant="subtitle1"
-                color="primary"
+                to='/reset'
+                variant='subtitle1'
+                color='primary'
                 sx={{ textDecoration: 'none', cursor: 'pointer' }}
               >
                 忘记密码?
@@ -270,22 +336,36 @@ const LoginForm = ({ ...others }) => {
 
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
-                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                <Button
+                  disableElevation
+                  disabled={isSubmitting}
+                  fullWidth
+                  size='large'
+                  type='submit'
+                  variant='contained'
+                  color='primary'
+                >
                   登录
                 </Button>
               </AnimateButton>
             </Box>
             {turnstileEnabled ? (
-                <div style={{display: 'flex', justifyContent: 'center', marginTop: 20}}>
-                    <Turnstile
-                        sitekey={turnstileSiteKey}
-                        onVerify={(token) => {
-                            setTurnstileToken(token);
-                        }}
-                    />
-                </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  marginTop: 20,
+                }}
+              >
+                <Turnstile
+                  sitekey={turnstileSiteKey}
+                  onVerify={(token) => {
+                    setTurnstileToken(token);
+                  }}
+                />
+              </div>
             ) : (
-                <></>
+              <></>
             )}
           </form>
         )}

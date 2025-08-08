@@ -4,15 +4,17 @@ import { Card, CardContent, Typography } from '@mui/material';
 
 const HourlyConsumptionChart = ({ data }) => {
   // 添加数据验证和错误处理
-  const validData = data.filter(item => item && item.hour && typeof item.hour === 'string');
+  const validData = data.filter(
+    (item) => item && item.hour && typeof item.hour === 'string'
+  );
 
   // 处理时间，将小时加12
-  const processedData = validData.map(item => {
+  const processedData = validData.map((item) => {
     const [hour] = item.hour.split(':');
-    const newHour = (parseInt(hour)) % 24;
+    const newHour = parseInt(hour) % 24;
     return {
       ...item,
-      hour: `${newHour.toString().padStart(2, '0')}:00`
+      hour: `${newHour.toString().padStart(2, '0')}:00`,
     };
   });
 
@@ -26,15 +28,15 @@ const HourlyConsumptionChart = ({ data }) => {
       height: 350,
     },
     xaxis: {
-      categories: sortedData.map(item => item.hour),
+      categories: sortedData.map((item) => item.hour),
       labels: {
-        formatter: function(value) {
+        formatter: function (value) {
           if (value && typeof value === 'string' && value.includes(':')) {
             return value.split(':')[0] + 'h';
           }
           return value;
-        }
-      }
+        },
+      },
     },
     yaxis: [
       {
@@ -42,10 +44,10 @@ const HourlyConsumptionChart = ({ data }) => {
           text: '次数',
         },
         labels: {
-          formatter: function(val) {
+          formatter: function (val) {
             return Math.round(val);
-          }
-        }
+          },
+        },
       },
       {
         opposite: true,
@@ -53,10 +55,10 @@ const HourlyConsumptionChart = ({ data }) => {
           text: '金额',
         },
         labels: {
-          formatter: function(val) {
+          formatter: function (val) {
             return val.toFixed(2);
-          }
-        }
+          },
+        },
       },
     ],
     stroke: {
@@ -72,27 +74,27 @@ const HourlyConsumptionChart = ({ data }) => {
     tooltip: {
       y: [
         {
-          formatter: function(val) {
+          formatter: function (val) {
             return Math.round(val);
-          }
+          },
         },
         {
-          formatter: function(val) {
+          formatter: function (val) {
             return val.toFixed(4);
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   };
 
   const series = [
     {
       name: '次数',
-      data: sortedData.map(item => item.count),
+      data: sortedData.map((item) => item.count),
     },
     {
       name: '金额',
-      data: sortedData.map(item => item.amount),
+      data: sortedData.map((item) => item.amount),
     },
   ];
 
@@ -101,12 +103,10 @@ const HourlyConsumptionChart = ({ data }) => {
     return (
       <Card>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant='h6' gutterBottom>
             每小时消耗统计
           </Typography>
-          <Typography>
-            暂无数据
-          </Typography>
+          <Typography>暂无数据</Typography>
         </CardContent>
       </Card>
     );
@@ -118,7 +118,7 @@ const HourlyConsumptionChart = ({ data }) => {
         <Chart
           options={chartOptions}
           series={series}
-          type="line"
+          type='line'
           height={350}
         />
       </CardContent>

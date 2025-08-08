@@ -9,7 +9,9 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  Paper,Box,Tooltip
+  Paper,
+  Box,
+  Tooltip,
 } from '@mui/material';
 import WithdrawalTableHead from './component/TableHead';
 import { API } from 'utils/api';
@@ -19,7 +21,7 @@ const statusMap = {
   1: { label: '待处理', color: 'orange' },
   2: { label: '已批准', color: 'blue' },
   3: { label: '已拒绝', color: 'red' },
-  4: { label: '已处理', color: 'green' }
+  4: { label: '已处理', color: 'green' },
 };
 const ROWS_PER_PAGE = 15;
 
@@ -45,16 +47,17 @@ export default function Log() {
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp * 1000); // 假设 timestamp 是秒级别的时间戳
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} `
-         + `${String(date.getHours()).padStart(2, '0')}:`
-         + `${String(date.getMinutes()).padStart(2, '0')}:`
-         + `${String(date.getSeconds()).padStart(2, '0')}`;
+    return (
+      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ` +
+      `${String(date.getHours()).padStart(2, '0')}:` +
+      `${String(date.getMinutes()).padStart(2, '0')}:` +
+      `${String(date.getSeconds()).padStart(2, '0')}`
+    );
   };
 
   const getStatusColor = (status) => {
     return statusMap[status] ? statusMap[status].color : 'grey';
   };
-  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -72,73 +75,91 @@ export default function Log() {
 
   return (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">提现记录</Typography>
+      <Stack
+        direction='row'
+        alignItems='center'
+        justifyContent='space-between'
+        mb={5}
+      >
+        <Typography variant='h4'>提现记录</Typography>
       </Stack>
       <Card>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 650 }} aria-label='simple table'>
             <WithdrawalTableHead />
             <TableBody>
               {withdrawals && withdrawals.length > 0 ? (
                 paginatedWithdrawals().map((withdrawals, index) => (
                   <TableRow key={index}>
-                    
-                    <TableCell align="right">
-                      {withdrawals.created !== undefined ?
-                        formatDate(withdrawals.created) : '无'}
+                    <TableCell align='right'>
+                      {withdrawals.created !== undefined
+                        ? formatDate(withdrawals.created)
+                        : '无'}
                     </TableCell>
 
-                    <TableCell align="right">
-                      {withdrawals.order_number !== undefined  ?
-                        withdrawals.order_number : '无'}
+                    <TableCell align='right'>
+                      {withdrawals.order_number !== undefined
+                        ? withdrawals.order_number
+                        : '无'}
                     </TableCell>
 
-                    <TableCell align="right">
-                      {withdrawals.withdrawal_amount !== undefined && withdrawals.withdrawal_amount !== 0 ?
-                        (withdrawals.withdrawal_amount/500000 ).toFixed(2) : '无'}
+                    <TableCell align='right'>
+                      {withdrawals.withdrawal_amount !== undefined &&
+                      withdrawals.withdrawal_amount !== 0
+                        ? (withdrawals.withdrawal_amount / 500000).toFixed(2)
+                        : '无'}
                     </TableCell>
-                    <TableCell align="right">
-                      {withdrawals.alipay_account !== undefined  ?
-                        withdrawals.alipay_account : '无'}
+                    <TableCell align='right'>
+                      {withdrawals.alipay_account !== undefined
+                        ? withdrawals.alipay_account
+                        : '无'}
                     </TableCell>
-                    <TableCell align="right">
-                      {withdrawals.comment && withdrawals.comment.length > 10 ? (
-                        <Tooltip title={withdrawals.comment} placement="top">
-                          <Typography noWrap>{withdrawals.comment.slice(0, 10) + '...'}</Typography>
+                    <TableCell align='right'>
+                      {withdrawals.comment &&
+                      withdrawals.comment.length > 10 ? (
+                        <Tooltip title={withdrawals.comment} placement='top'>
+                          <Typography noWrap>
+                            {withdrawals.comment.slice(0, 10) + '...'}
+                          </Typography>
                         </Tooltip>
                       ) : (
-                        <Typography noWrap>{withdrawals.comment || '无'}</Typography>
+                        <Typography noWrap>
+                          {withdrawals.comment || '无'}
+                        </Typography>
                       )}
                     </TableCell>
-                    <TableCell align="right">
-                    <Typography style={{ color: getStatusColor(withdrawals.status) }}>
-                      {withdrawals.status !== undefined ?
-                        statusMap[withdrawals.status] ? statusMap[withdrawals.status].label : '未知状态' : '无'}
-                    </Typography>
+                    <TableCell align='right'>
+                      <Typography
+                        style={{ color: getStatusColor(withdrawals.status) }}
+                      >
+                        {withdrawals.status !== undefined
+                          ? statusMap[withdrawals.status]
+                            ? statusMap[withdrawals.status].label
+                            : '未知状态'
+                          : '无'}
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} align="center">
-                   没有提现记录
+                  <TableCell colSpan={4} align='center'>
+                    没有提现记录
                   </TableCell>
                 </TableRow>
               )}
-
             </TableBody>
           </Table>
         </TableContainer>
       </Card>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', m: 2 }}>
-      <Pagination
-        count={Math.ceil(withdrawals.length / ROWS_PER_PAGE)}
-        page={page}
-        onChange={handleChangePage}
-        color="primary"
-      />
-    </Box>
+        <Pagination
+          count={Math.ceil(withdrawals.length / ROWS_PER_PAGE)}
+          page={page}
+          onChange={handleChangePage}
+          color='primary'
+        />
+      </Box>
     </>
   );
 }

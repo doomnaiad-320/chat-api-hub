@@ -8,7 +8,9 @@ const Logo = () => {
   const siteInfo = useSelector((state) => state.siteInfo);
   const theme = useTheme();
   const logo = theme.palette.mode === 'light' ? logoLight : logoDark;
-  return <img src={siteInfo.logo || logo} alt={siteInfo.system_name} width="80" />;
+  return (
+    <img src={siteInfo.logo || logo} alt={siteInfo.system_name} width='80' />
+  );
 };
 
 export default Logo;

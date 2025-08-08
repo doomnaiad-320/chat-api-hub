@@ -3,7 +3,7 @@ import { store } from 'store/index';
 import { LOGIN } from 'store/actions';
 //import { showError } from './common';
 export const API = axios.create({
-  baseURL: process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : '/'
+  baseURL: process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : '/',
 });
 
 API.interceptors.response.use(

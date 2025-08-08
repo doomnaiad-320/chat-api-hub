@@ -1,4 +1,3 @@
-
 import { TableCell, TableHead, TableRow } from '@mui/material';
 
 const WithdrawalTableHead = () => {

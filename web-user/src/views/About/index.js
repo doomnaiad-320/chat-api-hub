@@ -37,8 +37,8 @@ const About = () => {
         <>
           <Box>
             <Container sx={{ paddingTop: '40px' }}>
-              <MainCard title="关于">
-                <Typography variant="body2">
+              <MainCard title='关于'>
+                <Typography variant='body2'>
                   可在设置页面设置关于内容，支持 HTML & Markdown <br />
                 </Typography>
               </MainCard>
@@ -49,11 +49,18 @@ const About = () => {
         <>
           <Box>
             {about.startsWith('https://') ? (
-              <iframe title="about" src={about} style={{ width: '100%', height: '100vh', border: 'none' }} />
+              <iframe
+                title='about'
+                src={about}
+                style={{ width: '100%', height: '100vh', border: 'none' }}
+              />
             ) : (
               <>
                 <Container>
-                  <div style={{ fontSize: 'larger' }} dangerouslySetInnerHTML={{ __html: about }}></div>
+                  <div
+                    style={{ fontSize: 'larger' }}
+                    dangerouslySetInnerHTML={{ __html: about }}
+                  ></div>
                 </Container>
               </>
             )}

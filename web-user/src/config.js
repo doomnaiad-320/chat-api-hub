@@ -23,8 +23,8 @@ const config = {
     turnstile_site_key: '',
     version: '',
     wechat_login: false,
-    wechat_qrcode: ''
-  }
+    wechat_qrcode: '',
+  },
 };
 
 export default config;

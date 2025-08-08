@@ -1,6 +1,14 @@
 import React from 'react';
 import { enqueueSnackbar, closeSnackbar, SnackbarContent } from 'notistack';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle,Box,Typography   } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Box,
+  Typography,
+} from '@mui/material';
 import { snackbarConstants } from 'constants/SnackbarConstants';
 import { API } from './api';
 export function getSystemName() {
@@ -8,13 +16,32 @@ export function getSystemName() {
   if (!system_name) return 'Chat API';
   return system_name;
 }
-import { 
-  OpenAI, Claude, Gemini, DeepSeek, Zhipu, Hunyuan, 
-  Spark, Minimax, Yi, Groq, Ollama, 
-  Doubao, Ai360, Midjourney, Flux, Grok, Suno,
-  Pika, Vidu,BaiduCloud,AlibabaCloud,Cohere,Baichuan,Kimi
+import {
+  OpenAI,
+  Claude,
+  Gemini,
+  DeepSeek,
+  Zhipu,
+  Hunyuan,
+  Spark,
+  Minimax,
+  Yi,
+  Groq,
+  Ollama,
+  Doubao,
+  Ai360,
+  Midjourney,
+  Flux,
+  Grok,
+  Suno,
+  Pika,
+  Vidu,
+  BaiduCloud,
+  AlibabaCloud,
+  Cohere,
+  Baichuan,
+  Kimi,
 } from '@lobehub/icons';
-
 
 export function isMobile() {
   return window.innerWidth <= 600;
@@ -27,13 +54,13 @@ export function SnackbarHTMLContent({ htmlContent }) {
 
 export function getSnackbarOptions(variant) {
   let options = snackbarConstants.Common[variant];
-  
+
   // 添加 anchorOrigin 属性以确定Snackbar的位置
   const positionOptions = {
     anchorOrigin: {
       vertical: 'top',
       horizontal: 'left',
-    }
+    },
   };
 
   if (isMobile()) {
@@ -47,23 +74,33 @@ export function getSnackbarOptions(variant) {
   return options;
 }
 
-
-
 export function showError(error) {
   if (error.message) {
     if (error.name === 'AxiosError') {
       switch (error.response.status) {
         case 429:
-          enqueueSnackbar('错误：请求次数过多，请稍后再试！', getSnackbarOptions('ERROR'));
+          enqueueSnackbar(
+            '错误：请求次数过多，请稍后再试！',
+            getSnackbarOptions('ERROR')
+          );
           break;
         case 500:
-          enqueueSnackbar('错误：服务器内部错误，请联系管理员！', getSnackbarOptions('ERROR'));
+          enqueueSnackbar(
+            '错误：服务器内部错误，请联系管理员！',
+            getSnackbarOptions('ERROR')
+          );
           break;
         case 405:
-          enqueueSnackbar('本站仅作演示之用，无服务端！', getSnackbarOptions('INFO'));
+          enqueueSnackbar(
+            '本站仅作演示之用，无服务端！',
+            getSnackbarOptions('INFO')
+          );
           break;
         default:
-          enqueueSnackbar('错误：' + error.message, getSnackbarOptions('ERROR'));
+          enqueueSnackbar(
+            '错误：' + error.message,
+            getSnackbarOptions('ERROR')
+          );
       }
       return;
     }
@@ -75,10 +112,10 @@ export function showError(error) {
 export function showNotice(message, isHTML = false) {
   const NoticeContent = React.forwardRef(({ id, ...props }, ref) => {
     return (
-      <SnackbarContent ref={ref} role="alert" {...props}>
-        <Dialog 
-          open={true} 
-          maxWidth="md" 
+      <SnackbarContent ref={ref} role='alert' {...props}>
+        <Dialog
+          open={true}
+          maxWidth='md'
           fullWidth
           style={{ pointerEvents: 'auto' }}
           disableEscapeKeyDown
@@ -89,10 +126,10 @@ export function showNotice(message, isHTML = false) {
           }}
         >
           <DialogTitle>
-            <Typography 
-              variant="h4" 
-              align="center" 
-              sx={{ 
+            <Typography
+              variant='h4'
+              align='center'
+              sx={{
                 fontWeight: 'bold',
                 fontSize: '28px',
               }}
@@ -108,11 +145,18 @@ export function showNotice(message, isHTML = false) {
             )}
           </DialogContent>
           <DialogActions>
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mb: 2 }}>
-              <Button 
-                onClick={() => closeSnackbar(id)} 
-                color="primary" 
-                variant="contained"
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                mb: 2,
+              }}
+            >
+              <Button
+                onClick={() => closeSnackbar(id)}
+                color='primary'
+                variant='contained'
                 sx={{
                   borderRadius: '20px',
                   padding: '6px 20px',
@@ -167,7 +211,10 @@ export async function getOAuthState() {
   }
 }
 
-export async function onGitHubOAuthClicked(github_client_id, openInNewTab = false) {
+export async function onGitHubOAuthClicked(
+  github_client_id,
+  openInNewTab = false
+) {
   const state = await getOAuthState();
   if (!state) return;
   let url = `https://github.com/login/oauth/authorize?client_id=${github_client_id}&state=${state}&scope=user:email`;
@@ -208,7 +255,9 @@ export function timestamp2string(timestamp) {
   if (second.length === 1) {
     second = '0' + second;
   }
-  return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+  return (
+    year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second
+  );
 }
 
 export function calculateQuota(quota, digits = 2) {
@@ -224,15 +273,13 @@ export function getQuotaPerUnit() {
   return quotaPerUnit;
 }
 
-
-
 export function renderQuota(quota, digits = 2) {
   let quotaPerUnit = localStorage.getItem('quota_per_unit');
   let displayInCurrency = localStorage.getItem('display_in_currency');
   quotaPerUnit = parseFloat(quotaPerUnit);
   displayInCurrency = displayInCurrency === 'true';
   if (displayInCurrency) {
-      return '$' + (quota / quotaPerUnit).toFixed(digits);
+    return '$' + (quota / quotaPerUnit).toFixed(digits);
   }
   return renderNumber(quota);
 }
@@ -243,11 +290,10 @@ export function inviteQuota(quota, digits = 2) {
   quotaPerUnit = parseFloat(quotaPerUnit);
   displayInCurrency = displayInCurrency === 'true';
   if (displayInCurrency) {
-      return '$' + (quota / quotaPerUnit).toFixed(digits);
+    return '$' + (quota / quotaPerUnit).toFixed(digits);
   }
   return renderNumber(quota);
 }
-
 
 export const verifyJSON = (str) => {
   try {
@@ -274,7 +320,7 @@ export function renderQuotaWithPrompt(quota, digits) {
   let displayInCurrency = localStorage.getItem('display_in_currency');
   displayInCurrency = displayInCurrency === 'true';
   if (displayInCurrency) {
-    return `（等价金额：${renderQuota(quota*500000, digits)}）`;
+    return `（等价金额：${renderQuota(quota * 500000, digits)}）`;
   }
   return '';
 }
@@ -298,18 +344,27 @@ export function removeTrailingSlash(url) {
 
 export const getModelIcon = (modelName) => {
   if (modelName.startsWith('gpt-3')) {
-    return <OpenAI.Avatar size={20} type="gpt3" />;
+    return <OpenAI.Avatar size={20} type='gpt3' />;
   } else if (modelName.startsWith('gpt-4') || modelName.startsWith('chatgpt')) {
-    return <OpenAI.Avatar size={20} type="gpt4" />;
-  } else if (modelName.startsWith('o1') || modelName.startsWith('o3') || modelName.startsWith('o4')) {
-    return <OpenAI.Avatar size={20} type="o1" />;
-  } else if (modelName.startsWith('tts') || modelName.startsWith('dall-e') || 
-  modelName.startsWith('whisper') || modelName.startsWith('omni-') || 
-  modelName.startsWith('text-embedding') || modelName.startsWith('text-moderation-')
-   || modelName.startsWith('davinci') ||  modelName.startsWith('babbage')
+    return <OpenAI.Avatar size={20} type='gpt4' />;
+  } else if (
+    modelName.startsWith('o1') ||
+    modelName.startsWith('o3') ||
+    modelName.startsWith('o4')
+  ) {
+    return <OpenAI.Avatar size={20} type='o1' />;
+  } else if (
+    modelName.startsWith('tts') ||
+    modelName.startsWith('dall-e') ||
+    modelName.startsWith('whisper') ||
+    modelName.startsWith('omni-') ||
+    modelName.startsWith('text-embedding') ||
+    modelName.startsWith('text-moderation-') ||
+    modelName.startsWith('davinci') ||
+    modelName.startsWith('babbage')
   ) {
     return <OpenAI.Avatar size={20} />;
-  }else if (modelName.startsWith('claude')) {
+  } else if (modelName.startsWith('claude')) {
     return <Claude.Color size={20} />;
   } else if (modelName.startsWith('gemini')) {
     return <Gemini.Color size={20} />;
@@ -335,7 +390,10 @@ export const getModelIcon = (modelName) => {
     return <Doubao.Color size={20} />;
   } else if (modelName.startsWith('360')) {
     return <Ai360.Color size={20} />;
-  } else if (modelName.startsWith('midjourney') || modelName.startsWith('mj-chat')) {
+  } else if (
+    modelName.startsWith('midjourney') ||
+    modelName.startsWith('mj-chat')
+  ) {
     return <Midjourney size={20} />;
   } else if (modelName.startsWith('flux')) {
     return <Flux size={20} />;

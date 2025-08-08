@@ -44,8 +44,8 @@ const Header = ({ handleLeftDrawerToggle }) => {
         color: theme.palette.text.primary,
         '&:hover': {
           backgroundColor: 'transparent',
-          color: theme.palette.primary.main
-        }
+          color: theme.palette.primary.main,
+        },
       }}
     >
       {children}
@@ -59,16 +59,19 @@ const Header = ({ handleLeftDrawerToggle }) => {
           width: 228,
           display: 'flex',
           [theme.breakpoints.down('md')]: {
-            width: 'auto'
-          }
+            width: 'auto',
+          },
         }}
       >
-        <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+        <Box
+          component='span'
+          sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}
+        >
           <LogoSection />
         </Box>
         <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
           <Avatar
-            variant="rounded"
+            variant='rounded'
             sx={{
               ...theme.typography.commonAvatar,
               ...theme.typography.mediumAvatar,
@@ -76,13 +79,13 @@ const Header = ({ handleLeftDrawerToggle }) => {
               transition: 'all .2s ease-in-out',
               '&:hover': {
                 background: theme.palette.secondary.dark,
-                color: theme.palette.secondary.light
-              }
+                color: theme.palette.secondary.light,
+              },
             }}
             onClick={handleLeftDrawerToggle}
-            color="inherit"
+            color='inherit'
           >
-            <IconMenu2 stroke={1.5} size="1.3rem" />
+            <IconMenu2 stroke={1.5} size='1.3rem' />
           </Avatar>
         </ButtonBase>
       </Box>
@@ -90,7 +93,11 @@ const Header = ({ handleLeftDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
       <Notice />
-      {chatLink && <NavButton to="/chatweb" chatLink={chatLink}>对话</NavButton>}
+      {chatLink && (
+        <NavButton to='/chatweb' chatLink={chatLink}>
+          对话
+        </NavButton>
+      )}
       <ThemeButton />
       <ProfileSection />
     </>
@@ -98,7 +105,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
 };
 
 Header.propTypes = {
-  handleLeftDrawerToggle: PropTypes.func
+  handleLeftDrawerToggle: PropTypes.func,
 };
 
 export default Header;

@@ -41,7 +41,7 @@ import React from 'react';
 export default function UserCard({ children }) {
   const renderShape = (
     <SvgColor
-      color="paper"
+      color='paper'
       src={shapeAvatar}
       sx={{
         width: '100%',
@@ -49,7 +49,7 @@ export default function UserCard({ children }) {
         zIndex: 10,
         bottom: -26,
         position: 'absolute',
-        color: 'background.paper'
+        color: 'background.paper',
       }}
     />
   );
@@ -67,21 +67,21 @@ export default function UserCard({ children }) {
         marginRight: 'auto',
         left: 0,
         right: 0,
-        bottom: (theme) => theme.spacing(-4)
+        bottom: (theme) => theme.spacing(-4),
       }}
     />
   );
 
   const renderCover = (
     <Box
-      component="img"
+      component='img'
       src={coverAvatar}
       sx={{
         top: 0,
         width: 1,
         height: 1,
         objectFit: 'cover',
-        position: 'absolute'
+        position: 'absolute',
       }}
     />
   );
@@ -97,12 +97,12 @@ export default function UserCard({ children }) {
             width: '100%',
             height: '100%',
             position: 'absolute',
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.42)
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.42),
           },
           pt: {
             xs: 'calc(100% / 3)',
-            sm: 'calc(100% / 4.66)'
-          }
+            sm: 'calc(100% / 4.66)',
+          },
         }}
       >
         {renderShape}
@@ -111,7 +111,7 @@ export default function UserCard({ children }) {
       </Box>
       <Box
         sx={{
-          p: (theme) => theme.spacing(4, 3, 3, 3)
+          p: (theme) => theme.spacing(4, 3, 3, 3),
         }}
       >
         {children}

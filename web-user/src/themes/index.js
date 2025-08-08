@@ -15,16 +15,15 @@ import themeTypography from './typography';
 
 export const theme = (customization) => {
   const color = colors;
-  const options = customization.theme === 'light' ? GetLightOption() : GetDarkOption();
+  const options =
+    customization.theme === 'light' ? GetLightOption() : GetDarkOption();
   const themeOption = {
     colors: color,
     ...options,
-    customization
+    customization,
   };
 
-
   const themeOptions = {
-    
     direction: 'ltr',
     palette: themePalette(themeOption),
     mixins: {
@@ -32,11 +31,11 @@ export const theme = (customization) => {
         minHeight: '48px',
         padding: '16px',
         '@media (min-width: 600px)': {
-          minHeight: '48px'
-        }
-      }
+          minHeight: '48px',
+        },
+      },
     },
-    typography: themeTypography(themeOption)
+    typography: themeTypography(themeOption),
   };
 
   const themes = createTheme(themeOptions);
@@ -65,7 +64,7 @@ function GetDarkOption() {
     menuButtonColor: color.darkSecondaryMain,
     menuChip: color.darkLevel1,
     headBackgroundColor: color.darkBackground,
-    tableBorderBottom: color.darkDivider
+    tableBorderBottom: color.darkDivider,
   };
 }
 
@@ -88,6 +87,6 @@ function GetLightOption() {
     menuButtonColor: color.secondaryDark,
     menuChip: color.primaryLight,
     headBackgroundColor: color.tableBackground,
-    tableBorderBottom: color.tableBorderBottom
+    tableBorderBottom: color.tableBorderBottom,
   };
 }

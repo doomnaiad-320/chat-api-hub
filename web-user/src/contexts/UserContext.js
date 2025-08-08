@@ -23,7 +23,12 @@ const UserProvider = ({ children }) => {
     loadUser();
   }, [loadUser]);
 
-  return <UserContext.Provider value={{ loadUser, isUserLoaded }}> {children} </UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ loadUser, isUserLoaded }}>
+      {' '}
+      {children}{' '}
+    </UserContext.Provider>
+  );
 };
 
 export default UserProvider;

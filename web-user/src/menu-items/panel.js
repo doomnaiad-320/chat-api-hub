@@ -10,11 +10,23 @@ import {
   IconUser,
   IconUserScan,
   IconInfoCircle,
-  IconBrandGoogleAnalytics
+  IconBrandGoogleAnalytics,
 } from '@tabler/icons-react';
 
 // constant
-const icons = { IconDashboard, IconSitemap, IconArticle, IconCoin, IconAdjustments, IconKey, IconGardenCart, IconUser, IconUserScan,IconInfoCircle,IconBrandGoogleAnalytics };
+const icons = {
+  IconDashboard,
+  IconSitemap,
+  IconArticle,
+  IconCoin,
+  IconAdjustments,
+  IconKey,
+  IconGardenCart,
+  IconUser,
+  IconUserScan,
+  IconInfoCircle,
+  IconBrandGoogleAnalytics,
+};
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -29,7 +41,7 @@ const panel = {
       url: '/dashboard',
       icon: icons.IconDashboard,
       breadcrumbs: false,
-      isAdmin: false
+      isAdmin: false,
     },
     {
       id: 'token',
@@ -37,7 +49,7 @@ const panel = {
       type: 'item',
       url: '/token',
       icon: icons.IconKey,
-      breadcrumbs: false
+      breadcrumbs: false,
     },
     {
       id: 'log',
@@ -45,7 +57,7 @@ const panel = {
       type: 'item',
       url: '/log',
       icon: icons.IconBrandGoogleAnalytics,
-      breadcrumbs: false
+      breadcrumbs: false,
     },
     //{
     //  id: 'mjlog',
@@ -61,7 +73,7 @@ const panel = {
       type: 'item',
       url: '/topup',
       icon: icons.IconGardenCart,
-      breadcrumbs: false
+      breadcrumbs: false,
     },
     {
       id: 'model',
@@ -69,7 +81,7 @@ const panel = {
       type: 'item',
       url: '/model',
       icon: icons.IconSitemap,
-      breadcrumbs: false
+      breadcrumbs: false,
     },
     {
       id: 'profile',
@@ -85,9 +97,9 @@ const panel = {
       type: 'item',
       url: '/about',
       icon: icons.IconInfoCircle,
-      breadcrumbs: false
-    }
-  ]
+      breadcrumbs: false,
+    },
+  ],
 };
 
 export default panel;

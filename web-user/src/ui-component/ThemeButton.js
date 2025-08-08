@@ -17,13 +17,13 @@ export default function ThemeButton() {
         ml: 2,
         mr: 3,
         [theme.breakpoints.down('md')]: {
-          mr: 2
-        }
+          mr: 2,
+        },
       }}
     >
       <ButtonBase sx={{ borderRadius: '12px' }}>
         <Avatar
-          variant="rounded"
+          variant='rounded'
           sx={{
             ...theme.typography.commonAvatar,
             ...theme.typography.mediumAvatar,
@@ -32,17 +32,21 @@ export default function ThemeButton() {
             backgroundColor: theme.typography.menuChip.background,
             '&[aria-controls="menu-list-grow"],&:hover': {
               background: theme.palette.secondary.dark,
-              color: theme.palette.secondary.light
-            }
+              color: theme.palette.secondary.light,
+            },
           }}
           onClick={() => {
             let theme = defaultTheme === 'light' ? 'dark' : 'light';
             dispatch({ type: SET_THEME, theme: theme });
             localStorage.setItem('theme', theme);
           }}
-          color="inherit"
+          color='inherit'
         >
-          {defaultTheme === 'light' ? <IconSun stroke={1.5} size="1.3rem" /> : <IconMoon stroke={1.5} size="1.3rem" />}
+          {defaultTheme === 'light' ? (
+            <IconSun stroke={1.5} size='1.3rem' />
+          ) : (
+            <IconMoon stroke={1.5} size='1.3rem' />
+          )}
         </Avatar>
       </ButtonBase>
     </Box>

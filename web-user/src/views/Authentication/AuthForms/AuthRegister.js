@@ -17,7 +17,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Typography
+  Typography,
 } from '@mui/material';
 
 // third party
@@ -31,7 +31,7 @@ import { strengthColor, strengthIndicator } from 'utils/password-strength';
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { showError, showInfo,showSuccess } from 'utils/common';
+import { showError, showInfo, showSuccess } from 'utils/common';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
@@ -77,10 +77,13 @@ const RegisterForm = ({ ...others }) => {
       showError('请稍后几秒重试，Turnstile 正在检查用户环境！');
       return;
     }
-  
+
     setIsSending(true);
     try {
-      const { success, message } = await sendVerificationCode(email, turnstileToken);
+      const { success, message } = await sendVerificationCode(
+        email,
+        turnstileToken
+      );
       if (success) {
         setCountdown(30);
         showSuccess('验证码发送成功，请检查你的邮箱！');
@@ -93,8 +96,6 @@ const RegisterForm = ({ ...others }) => {
       setIsSending(false);
     }
   };
-  
-  
 
   useEffect(() => {
     let timer;
@@ -109,20 +110,19 @@ const RegisterForm = ({ ...others }) => {
   }, [countdown]);
 
   useEffect(() => {
-      let affCodeParam = searchParams.get('aff');
-      setAffCode(affCodeParam || '');
+    let affCodeParam = searchParams.get('aff');
+    setAffCode(affCodeParam || '');
 
-      if (affCodeParam) {
-        localStorage.setItem('aff', affCodeParam);
-      }
+    if (affCodeParam) {
+      localStorage.setItem('aff', affCodeParam);
+    }
 
-      setShowEmailVerification(siteInfo.email_verification);
-      if (siteInfo.turnstile_check) {
-        setTurnstileEnabled(true);
-        setTurnstileSiteKey(siteInfo.turnstile_site_key);
-      }
+    setShowEmailVerification(siteInfo.email_verification);
+    if (siteInfo.turnstile_check) {
+      setTurnstileEnabled(true);
+      setTurnstileSiteKey(siteInfo.turnstile_site_key);
+    }
   }, [searchParams, siteInfo]);
-
 
   return (
     <>
@@ -133,18 +133,25 @@ const RegisterForm = ({ ...others }) => {
           confirmPassword: '',
           email: showEmailVerification ? '' : undefined,
           verification_code: showEmailVerification ? '' : undefined,
-          aff_code: affCode, 
-          submit: null
+          aff_code: affCode,
+          submit: null,
         }}
-        enableReinitialize={true} 
+        enableReinitialize={true}
         validationSchema={Yup.object().shape({
           username: Yup.string().max(255).required('用户名是必填项'),
           password: Yup.string().max(255).required('密码是必填项'),
           confirmPassword: Yup.string()
             .required('确认密码是必填项')
             .oneOf([Yup.ref('password'), null], '两次输入的密码不一致'),
-          email: showEmailVerification ? Yup.string().email('必须是有效的Email地址').max(255).required('Email是必填项') : Yup.mixed(),
-          verification_code: showEmailVerification ? Yup.string().max(255).required('验证码是必填项') : Yup.mixed()
+          email: showEmailVerification
+            ? Yup.string()
+                .email('必须是有效的Email地址')
+                .max(255)
+                .required('Email是必填项')
+            : Yup.mixed(),
+          verification_code: showEmailVerification
+            ? Yup.string().max(255).required('验证码是必填项')
+            : Yup.mixed(),
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           if (turnstileEnabled && turnstileToken === '') {
@@ -164,47 +171,70 @@ const RegisterForm = ({ ...others }) => {
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({
+          errors,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          isSubmitting,
+          touched,
+          values,
+        }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
-            <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-username-register">用户名</InputLabel>
+            <FormControl
+              fullWidth
+              error={Boolean(touched.username && errors.username)}
+              sx={{ ...theme.typography.customInput }}
+            >
+              <InputLabel htmlFor='outlined-adornment-username-register'>
+                用户名
+              </InputLabel>
               <OutlinedInput
-                id="outlined-adornment-username-register"
-                type="text"
+                id='outlined-adornment-username-register'
+                type='text'
                 value={values.username}
-                name="username"
+                name='username'
                 onBlur={handleBlur}
                 onChange={handleChange}
                 inputProps={{ autoComplete: 'username' }}
               />
               {touched.username && errors.username && (
-                <FormHelperText error id="standard-weight-helper-text--register">
+                <FormHelperText
+                  error
+                  id='standard-weight-helper-text--register'
+                >
                   {errors.username}
                 </FormHelperText>
               )}
             </FormControl>
 
-            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-register">密码</InputLabel>
+            <FormControl
+              fullWidth
+              error={Boolean(touched.password && errors.password)}
+              sx={{ ...theme.typography.customInput }}
+            >
+              <InputLabel htmlFor='outlined-adornment-password-register'>
+                密码
+              </InputLabel>
               <OutlinedInput
-                id="outlined-adornment-password-register"
+                id='outlined-adornment-password-register'
                 type={showPassword ? 'text' : 'password'}
                 value={values.password}
-                name="password"
-                label="Password"
+                name='password'
+                label='Password'
                 onBlur={handleBlur}
                 onChange={(e) => {
                   handleChange(e);
                   changePassword(e.target.value);
                 }}
                 endAdornment={
-                  <InputAdornment position="end">
+                  <InputAdornment position='end'>
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label='toggle password visibility'
                       onClick={handleClickShowPassword}
                       onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                      size="large"
+                      edge='end'
+                      size='large'
                       color={'primary'}
                     >
                       {showPassword ? <Visibility /> : <VisibilityOff />}
@@ -214,7 +244,10 @@ const RegisterForm = ({ ...others }) => {
                 inputProps={{}}
               />
               {touched.password && errors.password && (
-                <FormHelperText error id="standard-weight-helper-text-password-register">
+                <FormHelperText
+                  error
+                  id='standard-weight-helper-text-password-register'
+                >
                   {errors.password}
                 </FormHelperText>
               )}
@@ -224,19 +257,24 @@ const RegisterForm = ({ ...others }) => {
               error={Boolean(touched.confirmPassword && errors.confirmPassword)}
               sx={{ ...theme.typography.customInput }}
             >
-              <InputLabel htmlFor="outlined-adornment-confirm-password-register">确认密码</InputLabel>
+              <InputLabel htmlFor='outlined-adornment-confirm-password-register'>
+                确认密码
+              </InputLabel>
               <OutlinedInput
-                id="outlined-adornment-confirm-password-register"
+                id='outlined-adornment-confirm-password-register'
                 type={showPassword ? 'text' : 'password'}
                 value={values.confirmPassword}
-                name="confirmPassword"
-                label="Confirm Password"
+                name='confirmPassword'
+                label='Confirm Password'
                 onBlur={handleBlur}
                 onChange={handleChange}
                 inputProps={{}}
               />
               {touched.confirmPassword && errors.confirmPassword && (
-                <FormHelperText error id="standard-weight-helper-text-confirm-password-register">
+                <FormHelperText
+                  error
+                  id='standard-weight-helper-text-confirm-password-register'
+                >
                   {errors.confirmPassword}
                 </FormHelperText>
               )}
@@ -245,12 +283,15 @@ const RegisterForm = ({ ...others }) => {
             {strength !== 0 && (
               <FormControl fullWidth>
                 <Box sx={{ mb: 2 }}>
-                  <Grid container spacing={2} alignItems="center">
+                  <Grid container spacing={2} alignItems='center'>
                     <Grid item>
-                      <Box style={{ backgroundColor: level?.color }} sx={{ width: 85, height: 8, borderRadius: '7px' }} />
+                      <Box
+                        style={{ backgroundColor: level?.color }}
+                        sx={{ width: 85, height: 8, borderRadius: '7px' }}
+                      />
                     </Grid>
                     <Grid item>
-                      <Typography variant="subtitle1" fontSize="0.75rem">
+                      <Typography variant='subtitle1' fontSize='0.75rem'>
                         {level?.label}
                       </Typography>
                     </Grid>
@@ -261,52 +302,72 @@ const RegisterForm = ({ ...others }) => {
 
             {showEmailVerification && (
               <>
-                <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                  <InputLabel htmlFor="outlined-adornment-email-register">Email</InputLabel>
+                <FormControl
+                  fullWidth
+                  error={Boolean(touched.email && errors.email)}
+                  sx={{ ...theme.typography.customInput }}
+                >
+                  <InputLabel htmlFor='outlined-adornment-email-register'>
+                    Email
+                  </InputLabel>
                   <OutlinedInput
-                    id="outlined-adornment-email-register"
-                    type="text"
+                    id='outlined-adornment-email-register'
+                    type='text'
                     value={values.email}
-                    name="email"
+                    name='email'
                     onBlur={handleBlur}
                     onChange={handleChange}
                     endAdornment={
-                      <InputAdornment position="end">
-                        <Button 
-                          variant="contained" 
-                          color="primary" 
+                      <InputAdornment position='end'>
+                        <Button
+                          variant='contained'
+                          color='primary'
                           onClick={() => handleSendCode(values.email)}
                           disabled={countdown > 0 || isSending}
                         >
-                          {isSending ? '发送中...' : countdown > 0 ? `${countdown}s后重试` : '发送验证码'}
+                          {isSending
+                            ? '发送中...'
+                            : countdown > 0
+                            ? `${countdown}s后重试`
+                            : '发送验证码'}
                         </Button>
                       </InputAdornment>
                     }
                     inputProps={{}}
                   />
                   {touched.email && errors.email && (
-                    <FormHelperText error id="standard-weight-helper-text--register">
+                    <FormHelperText
+                      error
+                      id='standard-weight-helper-text--register'
+                    >
                       {errors.email}
                     </FormHelperText>
                   )}
                 </FormControl>
                 <FormControl
                   fullWidth
-                  error={Boolean(touched.verification_code && errors.verification_code)}
+                  error={Boolean(
+                    touched.verification_code && errors.verification_code
+                  )}
                   sx={{ ...theme.typography.customInput }}
                 >
-                  <InputLabel htmlFor="outlined-adornment-verification_code-register">验证码</InputLabel>
+                  <InputLabel htmlFor='outlined-adornment-verification_code-register'>
+                    验证码
+                  </InputLabel>
                   <OutlinedInput
-                    id="outlined-adornment-verification_code-register"
-                    type="text"
+                    id='outlined-adornment-verification_code-register'
+                    type='text'
                     value={values.verification_code}
-                    name="verification_code"
+                    name='verification_code'
                     onBlur={handleBlur}
                     onChange={handleChange}
                     inputProps={{}}
                   />
                   {touched.verification_code && errors.verification_code && (
-                    <FormHelperText error id="standard-weight-helper-text--register">
+                    <FormHelperText
+                      error
+                      id='standard-weight-helper-text--register'
+                    >
                       {errors.verification_code}
                     </FormHelperText>
                   )}
@@ -329,29 +390,46 @@ const RegisterForm = ({ ...others }) => {
             ) : (
               <></>
             )}
-            <FormControl fullWidth error={Boolean(touched.aff_code && errors.aff_code)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-affCode-register">邀请码</InputLabel>
+            <FormControl
+              fullWidth
+              error={Boolean(touched.aff_code && errors.aff_code)}
+              sx={{ ...theme.typography.customInput }}
+            >
+              <InputLabel htmlFor='outlined-adornment-affCode-register'>
+                邀请码
+              </InputLabel>
               <OutlinedInput
-                  id="outlined-adornment-affCode-register"
-                  type="text"
-                  value={values.aff_code}
-                  name="aff_code"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  inputProps={{
-                    maxLength: 6 
-                  }}
+                id='outlined-adornment-affCode-register'
+                type='text'
+                value={values.aff_code}
+                name='aff_code'
+                onBlur={handleBlur}
+                onChange={handleChange}
+                inputProps={{
+                  maxLength: 6,
+                }}
               />
               {touched.aff_code && errors.aff_code && (
-                  <FormHelperText error id="standard-weight-helper-text-affCode-register">
-                      {errors.aff_code}
-                  </FormHelperText>
+                <FormHelperText
+                  error
+                  id='standard-weight-helper-text-affCode-register'
+                >
+                  {errors.aff_code}
+                </FormHelperText>
               )}
-          </FormControl>
+            </FormControl>
 
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
-                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                <Button
+                  disableElevation
+                  disabled={isSubmitting}
+                  fullWidth
+                  size='large'
+                  type='submit'
+                  variant='contained'
+                  color='primary'
+                >
                   Sign up
                 </Button>
               </AnimateButton>

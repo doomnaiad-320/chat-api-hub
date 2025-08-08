@@ -6,11 +6,15 @@ import MainCard from 'ui-component/cards/MainCard';
 import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 
 const CardWrapper = styled(MainCard, {
-  shouldForwardProp: (prop) => prop !== 'color'
+  shouldForwardProp: (prop) => prop !== 'color',
 })(({ theme, color }) => {
-  const colorPalette = color ? theme.palette.augmentColor({ color: { main: color } }) : theme.palette.primary;
-  const bgColor = theme.palette.mode === 'dark' ? colorPalette.dark : colorPalette.lighter;
-  const pseudoElementColor = theme.palette.mode === 'dark' ? theme.palette.grey[800] : colorPalette.main;
+  const colorPalette = color
+    ? theme.palette.augmentColor({ color: { main: color } })
+    : theme.palette.primary;
+  const bgColor =
+    theme.palette.mode === 'dark' ? colorPalette.dark : colorPalette.lighter;
+  const pseudoElementColor =
+    theme.palette.mode === 'dark' ? theme.palette.grey[800] : colorPalette.main;
 
   return {
     backgroundColor: bgColor,
@@ -19,7 +23,7 @@ const CardWrapper = styled(MainCard, {
     position: 'relative',
     '&>div': {
       position: 'relative',
-      zIndex: 5
+      zIndex: 5,
     },
     '&:after': {
       content: '""',
@@ -33,8 +37,8 @@ const CardWrapper = styled(MainCard, {
       right: -95,
       [theme.breakpoints.down('sm')]: {
         top: -105,
-        right: -140
-      }
+        right: -140,
+      },
     },
     '&:before': {
       content: '""',
@@ -49,15 +53,23 @@ const CardWrapper = styled(MainCard, {
       opacity: 0.5,
       [theme.breakpoints.down('sm')]: {
         top: -155,
-        right: -70
-      }
-    }
+        right: -70,
+      },
+    },
   };
 });
 
-const StatisticalLineChartCard = ({ isLoading, title, chartData, todayValue, color }) => {
+const StatisticalLineChartCard = ({
+  isLoading,
+  title,
+  chartData,
+  todayValue,
+  color,
+}) => {
   const theme = useTheme();
-  const colorPalette = color ? theme.palette.augmentColor({ color: { main: color } }) : theme.palette.primary;
+  const colorPalette = color
+    ? theme.palette.augmentColor({ color: { main: color } })
+    : theme.palette.primary;
 
   return (
     <>
@@ -66,13 +78,21 @@ const StatisticalLineChartCard = ({ isLoading, title, chartData, todayValue, col
       ) : (
         <CardWrapper border={false} content={false} color={color}>
           <Box sx={{ p: 2.25, minHeight: 160 }}>
-            <Grid container direction="column">
+            <Grid container direction='column'>
               <Grid item sx={{ mb: 0.75 }}>
-                <Grid container alignItems="center">
+                <Grid container alignItems='center'>
                   <Grid item xs={6}>
-                    <Grid container alignItems="center">
+                    <Grid container alignItems='center'>
                       <Grid item>
-                        <Typography sx={{ fontSize: '2.125rem', fontWeight: 600, mr: 1, mt: 1.75, mb: 0.75 }}>
+                        <Typography
+                          sx={{
+                            fontSize: '2.125rem',
+                            fontWeight: 600,
+                            mr: 1,
+                            mt: 1.75,
+                            mb: 0.75,
+                          }}
+                        >
                           {todayValue || '0'}
                         </Typography>
                       </Grid>
@@ -81,7 +101,10 @@ const StatisticalLineChartCard = ({ isLoading, title, chartData, todayValue, col
                           sx={{
                             fontSize: '1rem',
                             fontWeight: 500,
-                            color: theme.palette.mode === 'dark' ? theme.palette.grey[400] : colorPalette.dark
+                            color:
+                              theme.palette.mode === 'dark'
+                                ? theme.palette.grey[400]
+                                : colorPalette.dark,
                           }}
                         >
                           {title}
@@ -89,15 +112,26 @@ const StatisticalLineChartCard = ({ isLoading, title, chartData, todayValue, col
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <Grid
+                    item
+                    xs={6}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
                     {chartData ? (
                       <Chart {...chartData} />
                     ) : (
                       <Typography
-                        variant="body2"
+                        variant='body2'
                         sx={{
                           fontWeight: 500,
-                          color: theme.palette.mode === 'dark' ? theme.palette.grey[400] : colorPalette.dark
+                          color:
+                            theme.palette.mode === 'dark'
+                              ? theme.palette.grey[400]
+                              : colorPalette.dark,
                         }}
                       >
                         无数据
@@ -119,7 +153,7 @@ StatisticalLineChartCard.propTypes = {
   title: PropTypes.string,
   chartData: PropTypes.object,
   todayValue: PropTypes.string,
-  color: PropTypes.string
+  color: PropTypes.string,
 };
 
 export default StatisticalLineChartCard;

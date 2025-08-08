@@ -29,7 +29,6 @@ const StatusProvider = ({ children }) => {
       if (data.logo) {
         logo = data.logo;
       }
-      
     } else {
       const backupSiteInfo = localStorage.getItem('siteInfo');
       if (backupSiteInfo) {
@@ -41,7 +40,7 @@ const StatusProvider = ({ children }) => {
           logo = data.logo;
         }
         dispatch({
-          payload: data
+          payload: data,
         });
       }
       showError('无法正常连接至服务器！');
@@ -51,7 +50,6 @@ const StatusProvider = ({ children }) => {
       document.title = system_name;
     }
 
-    
     if (logo) {
       logo = data.logo;
       const iconLink = document.querySelector("link[rel='icon']");
@@ -65,7 +63,12 @@ const StatusProvider = ({ children }) => {
     loadStatus().then();
   }, [loadStatus]);
 
-  return <LoadStatusContext.Provider value={loadStatus}> {children} </LoadStatusContext.Provider>;
+  return (
+    <LoadStatusContext.Provider value={loadStatus}>
+      {' '}
+      {children}{' '}
+    </LoadStatusContext.Provider>
+  );
 };
 
 export default StatusProvider;

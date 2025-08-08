@@ -1,4 +1,3 @@
-
 import { TableCell, TableHead, TableRow } from '@mui/material';
 
 const LogTableHead = () => {
@@ -22,6 +21,4 @@ const LogTableHead = () => {
 
 export default LogTableHead;
 
-LogTableHead.propTypes = {
-
-};
+LogTableHead.propTypes = {};

@@ -9,14 +9,22 @@ const Footer = () => {
   const siteInfo = useSelector((state) => state.siteInfo);
 
   return (
-    <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '64px' }}>
+    <Container
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '64px',
+      }}
+    >
       <Box sx={{ textAlign: 'center' }}>
         {siteInfo.footer_html ? (
-          <div className="custom-footer" dangerouslySetInnerHTML={{ __html: siteInfo.footer_html }}></div>
+          <div
+            className='custom-footer'
+            dangerouslySetInnerHTML={{ __html: siteInfo.footer_html }}
+          ></div>
         ) : (
-          <>
-            
-          </>
+          <></>
         )}
       </Box>
     </Container>

@@ -13,7 +13,7 @@ const Notice = () => {
     try {
       const res = await API.get('/api/notice');
       const { success, message, data } = res.data;
-      if (success && data) { 
+      if (success && data) {
         const htmlNotice = marked(data);
         showNotice(htmlNotice, true);
         // 更新最后显示时间
@@ -30,14 +30,14 @@ const Notice = () => {
     if (account.user) {
       const lastNoticeTime = localStorage.getItem('lastNoticeTime');
       const currentTime = Date.now();
-      const hoursPassed = (currentTime - parseInt(lastNoticeTime || '0')) / (1000 * 60 * 60);
-    
+      const hoursPassed =
+        (currentTime - parseInt(lastNoticeTime || '0')) / (1000 * 60 * 60);
+
       if (!lastNoticeTime || hoursPassed >= 24) {
         displayNotice();
       }
     }
   };
-  
 
   useEffect(() => {
     checkAndDisplayNotice();
@@ -47,9 +47,9 @@ const Notice = () => {
     <>
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
-      <Stack spacing={2} direction="row">
-        <Tooltip title="公告">
-          <IconButton onClick={displayNotice} color="primary">
+      <Stack spacing={2} direction='row'>
+        <Tooltip title='公告'>
+          <IconButton onClick={displayNotice} color='primary'>
             <Campaign />
           </IconButton>
         </Tooltip>

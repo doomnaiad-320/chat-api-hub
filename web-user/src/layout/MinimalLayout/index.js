@@ -14,12 +14,12 @@ const MinimalLayout = () => {
       <CssBaseline />
       <AppBar
         enableColorOnDark
-        position="fixed"
-        color="inherit"
+        position='fixed'
+        color='inherit'
         elevation={0}
         sx={{
           bgcolor: theme.palette.background.default,
-          flex: 'none'
+          flex: 'none',
         }}
       >
         <Toolbar>

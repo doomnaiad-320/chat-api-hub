@@ -15,19 +15,26 @@ const MenuList = () => {
       {menuItem.items.map((item) => {
         if (item.type !== 'group') {
           return (
-            <Typography key={item.id} variant="h6" color="error" align="center">
+            <Typography key={item.id} variant='h6' color='error' align='center'>
               Menu Items Error
             </Typography>
           );
         }
 
-        const filteredChildren = item.children.filter((child) => !child.isAdmin || userIsAdmin);
+        const filteredChildren = item.children.filter(
+          (child) => !child.isAdmin || userIsAdmin
+        );
 
         if (filteredChildren.length === 0) {
           return null;
         }
 
-        return <NavGroup key={item.id} item={{ ...item, children: filteredChildren }} />;
+        return (
+          <NavGroup
+            key={item.id}
+            item={{ ...item, children: filteredChildren }}
+          />
+        );
       })}
     </>
   );

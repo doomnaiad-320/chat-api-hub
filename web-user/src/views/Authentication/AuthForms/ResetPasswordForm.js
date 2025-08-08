@@ -13,7 +13,7 @@ const ResetPasswordForm = () => {
   const [searchParams] = useSearchParams();
   const [inputs, setInputs] = useState({
     email: '',
-    token: ''
+    token: '',
   });
   const [newPassword, setNewPassword] = useState('');
 
@@ -35,23 +35,35 @@ const ResetPasswordForm = () => {
     let token = searchParams.get('token');
     setInputs({
       token,
-      email
+      email,
     });
   }, []);
 
   return (
-    <Stack spacing={3} padding={'24px'} justifyContent={'center'} alignItems={'center'}>
+    <Stack
+      spacing={3}
+      padding={'24px'}
+      justifyContent={'center'}
+      alignItems={'center'}
+    >
       {!inputs.email || !inputs.token ? (
-        <Typography variant="h3" sx={{ textDecoration: 'none' }}>
+        <Typography variant='h3' sx={{ textDecoration: 'none' }}>
           无效的链接
         </Typography>
       ) : newPassword ? (
-        <Alert severity="error">
+        <Alert severity='error'>
           你的新密码是: <b>{newPassword}</b> <br />
           请登录后及时修改密码
         </Alert>
       ) : (
-        <Button fullWidth onClick={submit} size="large" type="submit" variant="contained" color="primary">
+        <Button
+          fullWidth
+          onClick={submit}
+          size='large'
+          type='submit'
+          variant='contained'
+          color='primary'
+        >
           点击重置密码
         </Button>
       )}

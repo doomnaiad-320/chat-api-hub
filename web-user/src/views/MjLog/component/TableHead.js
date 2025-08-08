@@ -24,5 +24,5 @@ const LogTableHead = () => {
 export default LogTableHead;
 
 LogTableHead.propTypes = {
-  userIsAdmin: PropTypes.bool
+  userIsAdmin: PropTypes.bool,
 };

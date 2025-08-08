@@ -15,7 +15,12 @@ import LogTableHead from './component/TableHead';
 import TableToolBar from './component/TableToolBar';
 import { API } from 'utils/api';
 import { ITEMS_PER_PAGE } from 'constants';
-import { IconRefresh, IconSearch, IconPhoto, IconChartBar } from '@tabler/icons-react';
+import {
+  IconRefresh,
+  IconSearch,
+  IconPhoto,
+  IconChartBar,
+} from '@tabler/icons-react';
 import HourlyConsumptionChart from './component/HourlyConsumptionChart';
 import ModelUsageChart from './component/ModelUsageChart';
 
@@ -32,7 +37,7 @@ export default function Log() {
     start_timestamp: startOfTodayTimestamp,
     end_timestamp: endTimestamp,
     type: 0,
-    channel: ''
+    channel: '',
   };
 
   const [logs, setLogs] = useState([]);
@@ -47,7 +52,7 @@ export default function Log() {
   const [stat, setStat] = useState({
     quota: 0,
     tpm: 0,
-    rpm: 0
+    rpm: 0,
   });
   const [showChart, setShowChart] = useState(true);
   const [hourlyData, setHourlyData] = useState([]);
@@ -62,7 +67,9 @@ export default function Log() {
 
   const fetchChartData = async () => {
     try {
-      const res = await API.get('/api/log/hourly-stats', { params: searchKeyword });
+      const res = await API.get('/api/log/hourly-stats', {
+        params: searchKeyword,
+      });
       const { success, hourly_data, model_data } = res.data;
       if (success) {
         setHourlyData(hourly_data);
@@ -150,7 +157,10 @@ export default function Log() {
   };
 
   const handleSearchKeyword = (event) => {
-    setSearchKeyword({ ...searchKeyword, [event.target.name]: event.target.value });
+    setSearchKeyword({
+      ...searchKeyword,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const handleRefresh = () => {
@@ -173,14 +183,18 @@ export default function Log() {
     });
     setInitPage(false);
     getLogSelfStat();
-    fetchChartData(); 
+    fetchChartData();
   }, [initPage, rowsPerPage]);
 
   return (
     <>
       <Card>
-        <Box component="form" onSubmit={searchLogs} noValidate>
-          <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} userIsAdmin={userIsAdmin} />
+        <Box component='form' onSubmit={searchLogs} noValidate>
+          <TableToolBar
+            filterName={searchKeyword}
+            handleFilterName={handleSearchKeyword}
+            userIsAdmin={userIsAdmin}
+          />
         </Box>
         <Toolbar
           sx={{
@@ -197,29 +211,47 @@ export default function Log() {
               flexGrow: 1,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-start'
+              justifyContent: 'flex-start',
             },
             '& .MuiButtonGroup-root': {
               margin: (theme) => theme.spacing(1, 0),
-            }
+            },
           }}
         >
           <h3>
-            总消耗额度：<span style={{ color: '#5ca941' }}>{renderQuota(stat.quota, 2)}</span>,
-            RPM: <span style={{ color: '#ff5722' }}>{stat.rpm}</span>,
-            TPM: <span style={{ color: '#2196f3' }}>{stat.tpm}</span>
+            总消耗额度：
+            <span style={{ color: '#5ca941' }}>
+              {renderQuota(stat.quota, 2)}
+            </span>
+            , RPM: <span style={{ color: '#ff5722' }}>{stat.rpm}</span>, TPM:{' '}
+            <span style={{ color: '#2196f3' }}>{stat.tpm}</span>
           </h3>
-          <ButtonGroup variant="outlined" aria-label="outlined primary button group">
-            <Button onClick={toggleChart} startIcon={<IconChartBar width={'18px'} />}>
+          <ButtonGroup
+            variant='outlined'
+            aria-label='outlined primary button group'
+          >
+            <Button
+              onClick={toggleChart}
+              startIcon={<IconChartBar width={'18px'} />}
+            >
               {showChart ? '隐藏图表' : '显示图表'}
             </Button>
-            <Button onClick={handleRefresh} startIcon={<IconRefresh width={'18px'} />}>
+            <Button
+              onClick={handleRefresh}
+              startIcon={<IconRefresh width={'18px'} />}
+            >
               重置
             </Button>
-            <Button onClick={searchLogs} startIcon={<IconSearch width={'18px'} />}>
+            <Button
+              onClick={searchLogs}
+              startIcon={<IconSearch width={'18px'} />}
+            >
               搜索
             </Button>
-            <Button onClick={goToLogPage} startIcon={<IconPhoto width={'18px'} />}>
+            <Button
+              onClick={goToLogPage}
+              startIcon={<IconPhoto width={'18px'} />}
+            >
               MJ
             </Button>
           </ButtonGroup>
@@ -237,20 +269,31 @@ export default function Log() {
         )}
 
         {searching && <LinearProgress />}
-        <PerfectScrollbar component="div">
+        <PerfectScrollbar component='div'>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <LogTableHead userIsAdmin={userIsAdmin} />
               <TableBody>
-                {logs && logs.length > 0 && logs.slice(activePage * rowsPerPage, (activePage + 1) * rowsPerPage).map((row, index) => (
-                  <LogTableRow item={row} key={`${row.id}_${index}`} userIsAdmin={userIsAdmin} />
-                ))}
+                {logs &&
+                  logs.length > 0 &&
+                  logs
+                    .slice(
+                      activePage * rowsPerPage,
+                      (activePage + 1) * rowsPerPage
+                    )
+                    .map((row, index) => (
+                      <LogTableRow
+                        item={row}
+                        key={`${row.id}_${index}`}
+                        userIsAdmin={userIsAdmin}
+                      />
+                    ))}
               </TableBody>
             </Table>
           </TableContainer>
         </PerfectScrollbar>
         <TablePagination
-          component="div"
+          component='div'
           page={activePage}
           count={logCount}
           rowsPerPage={rowsPerPage}

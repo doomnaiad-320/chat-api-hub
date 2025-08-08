@@ -46,7 +46,10 @@ const Header = () => {
       component={Link}
       to={chatLink ? `${to}?chat_link=${encodeURIComponent(chatLink)}` : to}
       sx={{
-        color: pathname === to ? theme.palette.primary.main : theme.palette.text.primary,
+        color:
+          pathname === to
+            ? theme.palette.primary.main
+            : theme.palette.text.primary,
         fontWeight: pathname === to ? 'bold' : 'normal',
         position: 'relative',
         fontSize: isSmallScreen ? '0.8rem' : '1rem',
@@ -60,15 +63,15 @@ const Header = () => {
           bottom: 0,
           left: 0,
           backgroundColor: theme.palette.primary.main,
-          transition: 'width 0.3s ease-in-out'
+          transition: 'width 0.3s ease-in-out',
         },
         '&:hover::after': {
-          width: '100%'
+          width: '100%',
         },
         '&:hover': {
           backgroundColor: 'transparent',
-          color: theme.palette.primary.main
-        }
+          color: theme.palette.primary.main,
+        },
       }}
     >
       {children}
@@ -76,14 +79,16 @@ const Header = () => {
   );
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: isExtraSmallScreen ? 'column' : 'row',
-      alignItems: 'center',
-      width: '100%',
-      padding: isSmallScreen ? '2px' : '4px', 
-      marginTop: '-8px', 
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: isExtraSmallScreen ? 'column' : 'row',
+        alignItems: 'center',
+        width: '100%',
+        padding: isSmallScreen ? '2px' : '4px',
+        marginTop: '-8px',
+      }}
+    >
       <Box
         sx={{
           width: isSmallScreen ? 'auto' : 228,
@@ -93,36 +98,42 @@ const Header = () => {
         <LogoSection />
       </Box>
 
-      <Stack 
-        spacing={isSmallScreen ? 1 : 2} 
-        direction={isExtraSmallScreen ? 'column' : 'row'} 
-        alignItems="center"
-        sx={{ 
-          flexGrow: 1, 
+      <Stack
+        spacing={isSmallScreen ? 1 : 2}
+        direction={isExtraSmallScreen ? 'column' : 'row'}
+        alignItems='center'
+        sx={{
+          flexGrow: 1,
           justifyContent: isExtraSmallScreen ? 'center' : 'flex-end',
           marginTop: isExtraSmallScreen ? '8px' : '0',
         }}
       >
-        <NavButton to="/home">{t('nav.home')}</NavButton>
-        <NavButton to="/about">{t('nav.about')}</NavButton>
-        <NavButton to="/pricing">{t('nav.pricing', '模型定价')}</NavButton>
-        {chatLink && <NavButton to="/chatweb" chatLink={chatLink}>{t('nav.chat')}</NavButton>}
+        <NavButton to='/home'>{t('nav.home')}</NavButton>
+        <NavButton to='/about'>{t('nav.about')}</NavButton>
+        <NavButton to='/pricing'>{t('nav.pricing', '模型定价')}</NavButton>
+        {chatLink && (
+          <NavButton to='/chatweb' chatLink={chatLink}>
+            {t('nav.chat')}
+          </NavButton>
+        )}
         <LanguageButton />
         <ThemeButton />
         <Button
           component={Link}
-          variant="contained"
-          to="/login"
-          color="primary"
+          variant='contained'
+          to='/login'
+          color='primary'
           sx={{
-            boxShadow: '0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08)',
+            boxShadow:
+              '0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08)',
             transition: 'all 0.15s ease',
             fontSize: isSmallScreen ? '0.8rem' : '1rem',
             padding: isSmallScreen ? '6px 12px' : '8px 16px',
             '&:hover': {
               transform: 'translateY(-1px)',
-              boxShadow: '0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08)'
-            }
+              boxShadow:
+                '0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08)',
+            },
           }}
         >
           {account.user ? t('nav.dashboard') : t('nav.login')}

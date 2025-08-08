@@ -23,45 +23,45 @@ const MainRoutes = {
   children: [
     {
       path: '',
-      element: <Dashboard />
+      element: <Dashboard />,
     },
     {
       path: 'dashboard',
-      element: <Dashboard />
+      element: <Dashboard />,
     },
     {
       path: 'log',
-      element: <Log />
+      element: <Log />,
     },
     {
       path: 'mjlog',
-      element: <Mjlog />
+      element: <Mjlog />,
     },
     {
       path: 'token',
-      element: <Token />
+      element: <Token />,
     },
     {
       path: 'topup',
-      element: <Topup />
+      element: <Topup />,
     },
     {
       path: 'profile',
-      element: <Profile />
+      element: <Profile />,
     },
     {
       path: 'model',
-      element: <Model />
+      element: <Model />,
     },
     {
       path: 'withdrawal',
-      element: <Withdrawal />
+      element: <Withdrawal />,
     },
     {
       path: '404',
-      element: <NotFoundView />
-    }
-  ]
+      element: <NotFoundView />,
+    },
+  ],
 };
 
 export default MainRoutes;

@@ -22,7 +22,7 @@ const NavGroup = ({ item }) => {
         return <NavItem key={menu.id} item={menu} level={1} />;
       default:
         return (
-          <Typography key={menu.id} variant="h6" color="error" align="center">
+          <Typography key={menu.id} variant='h6' color='error' align='center'>
             Menu Items Error
           </Typography>
         );
@@ -34,10 +34,20 @@ const NavGroup = ({ item }) => {
       <List
         subheader={
           item.title && (
-            <Typography variant="caption" sx={{ ...theme.typography.menuCaption }} display="block" gutterBottom>
+            <Typography
+              variant='caption'
+              sx={{ ...theme.typography.menuCaption }}
+              display='block'
+              gutterBottom
+            >
               {item.title}
               {item.caption && (
-                <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
+                <Typography
+                  variant='caption'
+                  sx={{ ...theme.typography.subMenuCaption }}
+                  display='block'
+                  gutterBottom
+                >
                   {item.caption}
                 </Typography>
               )}
@@ -55,7 +65,7 @@ const NavGroup = ({ item }) => {
 };
 
 NavGroup.propTypes = {
-  item: PropTypes.object
+  item: PropTypes.object,
 };
 
 export default NavGroup;

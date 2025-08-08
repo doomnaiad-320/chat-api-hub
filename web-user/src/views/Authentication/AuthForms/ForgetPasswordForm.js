@@ -5,7 +5,15 @@ import { API } from 'utils/api';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, Button, FormControl, FormHelperText, InputLabel, OutlinedInput, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  OutlinedInput,
+  Typography,
+} from '@mui/material';
 
 // third party
 import * as Yup from 'yup';
@@ -38,7 +46,9 @@ const ForgetPasswordForm = ({ ...others }) => {
       setSubmitting(false);
       return;
     }
-    const res = await API.get(`/api/reset_password?email=${values.email}&turnstile=${turnstileToken}`);
+    const res = await API.get(
+      `/api/reset_password?email=${values.email}&turnstile=${turnstileToken}`
+    );
     const { success, message } = res.data;
     if (success) {
       showSuccess('重置邮件发送成功，请检查邮箱！');
@@ -74,34 +84,54 @@ const ForgetPasswordForm = ({ ...others }) => {
   return (
     <>
       {sendEmail ? (
-        <Typography variant="h3" padding={'20px'}>
+        <Typography variant='h3' padding={'20px'}>
           重置邮件发送成功，请检查邮箱！
         </Typography>
       ) : (
         <Formik
           initialValues={{
-            email: ''
+            email: '',
           }}
           validationSchema={Yup.object().shape({
-            email: Yup.string().email('必须是有效的Email地址').max(255).required('Email是必填项')
+            email: Yup.string()
+              .email('必须是有效的Email地址')
+              .max(255)
+              .required('Email是必填项'),
           })}
           onSubmit={submit}
         >
-          {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+          {({
+            errors,
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            isSubmitting,
+            touched,
+            values,
+          }) => (
             <form noValidate onSubmit={handleSubmit} {...others}>
-              <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                <InputLabel htmlFor="outlined-adornment-email-register">Email</InputLabel>
+              <FormControl
+                fullWidth
+                error={Boolean(touched.email && errors.email)}
+                sx={{ ...theme.typography.customInput }}
+              >
+                <InputLabel htmlFor='outlined-adornment-email-register'>
+                  Email
+                </InputLabel>
                 <OutlinedInput
-                  id="outlined-adornment-email-register"
-                  type="text"
+                  id='outlined-adornment-email-register'
+                  type='text'
                   value={values.email}
-                  name="email"
+                  name='email'
                   onBlur={handleBlur}
                   onChange={handleChange}
                   inputProps={{}}
                 />
                 {touched.email && errors.email && (
-                  <FormHelperText error id="standard-weight-helper-text--register">
+                  <FormHelperText
+                    error
+                    id='standard-weight-helper-text--register'
+                  >
                     {errors.email}
                   </FormHelperText>
                 )}
@@ -124,10 +154,10 @@ const ForgetPasswordForm = ({ ...others }) => {
                     disableElevation
                     disabled={isSubmitting || disableButton}
                     fullWidth
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    color="primary"
+                    size='large'
+                    type='submit'
+                    variant='contained'
+                    color='primary'
                   >
                     {disableButton ? `重试 (${countdown})` : '提交'}
                   </Button>

@@ -19,12 +19,22 @@ import {
   ButtonGroup,
   Select,
   FormControl,
-  Checkbox
+  Checkbox,
 } from '@mui/material';
 import TableSwitch from 'ui-component/Switch';
-import { renderQuota, showSuccess, showError, timestamp2string } from 'utils/common';
+import {
+  renderQuota,
+  showSuccess,
+  showError,
+  timestamp2string,
+} from 'utils/common';
 import CircularProgress from '@mui/material/CircularProgress';
-import { IconDotsVertical, IconEdit, IconTrash, IconEye } from '@tabler/icons-react';
+import {
+  IconDotsVertical,
+  IconEdit,
+  IconTrash,
+  IconEye,
+} from '@tabler/icons-react';
 
 const initialState = {
   open: null,
@@ -32,7 +42,7 @@ const initialState = {
   openDelete: false,
   statusSwitch: 1,
   loading: false,
-  billingEnabled: 0
+  billingEnabled: 0,
 };
 
 function reducer(state, action) {
@@ -58,7 +68,11 @@ function createMenu(menuItems) {
   return (
     <>
       {menuItems.map((menuItem, index) => (
-        <MenuItem key={index} onClick={menuItem.onClick} sx={{ color: menuItem.color }}>
+        <MenuItem
+          key={index}
+          onClick={menuItem.onClick}
+          sx={{ color: menuItem.color }}
+        >
           {menuItem.icon}
           {menuItem.text}
         </MenuItem>
@@ -67,43 +81,46 @@ function createMenu(menuItems) {
   );
 }
 
-const TokensTableRow = React.memo(function TokensTableRow({ 
-  item, 
-  manageToken, 
-  handleOpenModal, 
-  setModalTokenId, 
-  selected, 
+const TokensTableRow = React.memo(function TokensTableRow({
+  item,
+  manageToken,
+  handleOpenModal,
+  setModalTokenId,
+  selected,
   handleSelectOne,
   modelRatioEnabled,
   billingByRequestEnabled,
   userGroupEnabled,
-  serverStatus
+  serverStatus,
 }) {
-  const [state, dispatch] = useReducer(reducer, { 
-    ...initialState, 
-    statusSwitch: item.status, 
-    billingEnabled: item.billing_enabled ? 1 : 0
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    statusSwitch: item.status,
+    billingEnabled: item.billing_enabled ? 1 : 0,
   });
 
-  const handleBillingChange = useCallback(async (event) => {
-    const billingValue = event.target.value;
-    dispatch({ type: 'SET_LOADING', payload: true });
-    dispatch({ type: 'SET_BILLING_ENABLED', payload: billingValue });
-    try {
-      const res = await API.put(`/api/token/${item.id}/billing_strategy`, {
-        billing_enabled: billingValue,
-      });
-      if (res && res.data && res.data.success) {
-        showSuccess('计费策略已更新');
-      } else {
-        throw new Error(res.data.message || '未知错误');
+  const handleBillingChange = useCallback(
+    async (event) => {
+      const billingValue = event.target.value;
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_BILLING_ENABLED', payload: billingValue });
+      try {
+        const res = await API.put(`/api/token/${item.id}/billing_strategy`, {
+          billing_enabled: billingValue,
+        });
+        if (res && res.data && res.data.success) {
+          showSuccess('计费策略已更新');
+        } else {
+          throw new Error(res.data.message || '未知错误');
+        }
+      } catch (error) {
+        showError(`更新失败: ${error.message ?? error.toString()}`);
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
       }
-    } catch (error) {
-      showError(`更新失败: ${error.message ?? error.toString()}`);
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
-  }, [item.id]);
+    },
+    [item.id]
+  );
 
   const handleDeleteOpen = useCallback(() => {
     dispatch({ type: 'SET_OPEN', payload: null });
@@ -114,35 +131,38 @@ const TokensTableRow = React.memo(function TokensTableRow({
     dispatch({ type: 'SET_OPEN_DELETE', payload: false });
   }, []);
 
-  const handleOpenMenu = useCallback((event, type) => {
-    let menuItems;
-    switch (type) {
-      case 'action':
-        menuItems = createMenu([
-          {
-            text: '编辑',
-            icon: <IconEdit style={{ marginRight: '16px' }} />,
-            onClick: () => {
-              dispatch({ type: 'SET_OPEN', payload: null });
-              handleOpenModal();
-              setModalTokenId(item.id);
+  const handleOpenMenu = useCallback(
+    (event, type) => {
+      let menuItems;
+      switch (type) {
+        case 'action':
+          menuItems = createMenu([
+            {
+              text: '编辑',
+              icon: <IconEdit style={{ marginRight: '16px' }} />,
+              onClick: () => {
+                dispatch({ type: 'SET_OPEN', payload: null });
+                handleOpenModal();
+                setModalTokenId(item.id);
+              },
+              color: undefined,
             },
-            color: undefined
-          },
-          {
-            text: '删除',
-            icon: <IconTrash style={{ marginRight: '16px' }} />,
-            onClick: handleDeleteOpen,
-            color: 'error.main'
-          }
-        ]);
-        break;
-      default:
-        menuItems = null;
-    }
-    dispatch({ type: 'SET_MENU_ITEMS', payload: menuItems });
-    dispatch({ type: 'SET_OPEN', payload: event.currentTarget });
-  }, [handleOpenModal, setModalTokenId, item.id, handleDeleteOpen]);
+            {
+              text: '删除',
+              icon: <IconTrash style={{ marginRight: '16px' }} />,
+              onClick: handleDeleteOpen,
+              color: 'error.main',
+            },
+          ]);
+          break;
+        default:
+          menuItems = null;
+      }
+      dispatch({ type: 'SET_MENU_ITEMS', payload: menuItems });
+      dispatch({ type: 'SET_OPEN', payload: event.currentTarget });
+    },
+    [handleOpenModal, setModalTokenId, item.id, handleDeleteOpen]
+  );
 
   const handleCloseMenu = useCallback(() => {
     dispatch({ type: 'SET_OPEN', payload: null });
@@ -164,34 +184,41 @@ const TokensTableRow = React.memo(function TokensTableRow({
   return (
     <>
       <TableRow tabIndex={item.id}>
-        <TableCell padding="checkbox">
+        <TableCell padding='checkbox'>
           <Checkbox
             checked={selected.indexOf(item.id) !== -1}
             onChange={(event) => handleSelectOne(event, item.id)}
           />
         </TableCell>
-        <TableCell onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(`${item.name}`);
-            showSuccess('已复制到剪贴板！');
-          } catch (error) {
-            showError(`复制失败，请手动复制。${item.name}`);
-          }
-        }}>
+        <TableCell
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText(`${item.name}`);
+              showSuccess('已复制到剪贴板！');
+            } catch (error) {
+              showError(`复制失败，请手动复制。${item.name}`);
+            }
+          }}
+        >
           {item.name}
         </TableCell>
         <TableCell>
           <Tooltip
             title={(() => {
               switch (state.statusSwitch) {
-                case 1: return '已启用';
-                case 2: return '已禁用';
-                case 3: return '已过期';
-                case 4: return '已耗尽';
-                default: return '未知';
+                case 1:
+                  return '已启用';
+                case 2:
+                  return '已禁用';
+                case 3:
+                  return '已过期';
+                case 4:
+                  return '已耗尽';
+                default:
+                  return '未知';
               }
             })()}
-            placement="top"
+            placement='top'
           >
             <TableSwitch
               id={`switch-${item.id}`}
@@ -204,15 +231,26 @@ const TokensTableRow = React.memo(function TokensTableRow({
           <TableCell>{item.group ? item.group : '默认'}</TableCell>
         )}
         <TableCell>{renderQuota(item.used_quota)}</TableCell>
-        <TableCell>{item.unlimited_quota ? '无限制' : renderQuota(item.remain_quota, 2)}</TableCell>
+        <TableCell>
+          {item.unlimited_quota ? '无限制' : renderQuota(item.remain_quota, 2)}
+        </TableCell>
         <TableCell>{timestamp2string(item.created_time)}</TableCell>
-        <TableCell>{item.expired_time === -1 ? '永不过期' : timestamp2string(item.expired_time)}</TableCell>
+        <TableCell>
+          {item.expired_time === -1
+            ? '永不过期'
+            : timestamp2string(item.expired_time)}
+        </TableCell>
         {modelRatioEnabled && billingByRequestEnabled && (
           <TableCell>
             {state.loading ? (
               <CircularProgress size={24} />
             ) : (
-              <FormControl fullWidth size="small" variant="outlined" sx={{ minWidth: 100 }}>
+              <FormControl
+                fullWidth
+                size='small'
+                variant='outlined'
+                sx={{ minWidth: 100 }}
+              >
                 <Select
                   value={state.billingEnabled}
                   onChange={handleBillingChange}
@@ -227,19 +265,19 @@ const TokensTableRow = React.memo(function TokensTableRow({
           </TableCell>
         )}
         <TableCell>
-          <Stack direction="row" spacing={1}>
-            <Tooltip title={`sk-${item.key}`} placement="top">
+          <Stack direction='row' spacing={1}>
+            <Tooltip title={`sk-${item.key}`} placement='top'>
               <IconButton
-                edge="end"
-                aria-label="view"
+                edge='end'
+                aria-label='view'
                 sx={{ color: 'rgb(99, 115, 129)' }}
               >
                 <IconEye />
               </IconButton>
             </Tooltip>
-            <ButtonGroup size="small" aria-label="split button">
+            <ButtonGroup size='small' aria-label='split button'>
               <Button
-                color="primary"
+                color='primary'
                 onClick={async () => {
                   try {
                     await navigator.clipboard.writeText(`sk-${item.key}`);
@@ -255,13 +293,16 @@ const TokensTableRow = React.memo(function TokensTableRow({
                 <Button
                   component={Link}
                   to={`/chatweb?chat_link=${serverStatus.chat_link}/#/?settings={"key":"sk-${item.key}","url":"${serverStatus.server_address}"}`}
-                  color="primary"
+                  color='primary'
                 >
                   对话
                 </Button>
               )}
             </ButtonGroup>
-            <IconButton onClick={(e) => handleOpenMenu(e, 'action')} sx={{ color: 'rgb(99, 115, 129)' }}>
+            <IconButton
+              onClick={(e) => handleOpenMenu(e, 'action')}
+              sx={{ color: 'rgb(99, 115, 129)' }}
+            >
               <IconDotsVertical />
             </IconButton>
           </Stack>
@@ -274,7 +315,7 @@ const TokensTableRow = React.memo(function TokensTableRow({
         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         PaperProps={{
-          sx: { width: 140 }
+          sx: { width: 140 },
         }}
       >
         {state.menuItems}
@@ -307,7 +348,7 @@ TokensTableRow.propTypes = {
   billingByRequestEnabled: PropTypes.bool.isRequired,
   userGroupEnabled: PropTypes.bool.isRequired,
   serverStatus: PropTypes.object.isRequired,
-  options: PropTypes.object.isRequired
+  options: PropTypes.object.isRequired,
 };
 
 export default TokensTableRow;

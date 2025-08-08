@@ -10,23 +10,24 @@ import LinearProgress from '@mui/material/LinearProgress';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Toolbar from '@mui/material/Toolbar';
 import { useNavigate } from 'react-router';
-import { Button, Card,  Container, Box } from '@mui/material';
+import { Button, Card, Container, Box } from '@mui/material';
 import LogTableRow from './component/TableRow';
 import LogTableHead from './component/TableHead';
 import TableToolBar from './component/TableToolBar';
 import { API } from 'utils/api';
 import { isAdmin } from 'utils/common';
 import { ITEMS_PER_PAGE } from 'constants';
-import { IconRefresh, IconSearch,IconFileText } from '@tabler/icons-react';
-
+import { IconRefresh, IconSearch, IconFileText } from '@tabler/icons-react';
 
 export default function MjLog() {
-  const SEVEN_DAYS_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000; 
+  const SEVEN_DAYS_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
   const originalKeyword = {
     channel_id: '',
     mj_id: '',
-    start_timestamp: Math.floor((new Date().getTime() - SEVEN_DAYS_IN_MILLISECONDS) /1000), // 转换成秒
-    end_timestamp: Math.floor(new Date().getTime() ) /1000, // 转换成秒
+    start_timestamp: Math.floor(
+      (new Date().getTime() - SEVEN_DAYS_IN_MILLISECONDS) / 1000
+    ), // 转换成秒
+    end_timestamp: Math.floor(new Date().getTime()) / 1000, // 转换成秒
   };
   const [logs, setLogs] = useState([]);
   const [activePage, setActivePage] = useState(0);
@@ -40,17 +41,17 @@ export default function MjLog() {
     setSearching(true);
     const url = userIsAdmin ? '/api/mj/' : '/api/mj/self/';
 
-    const params = { 
-      p: startIdx, 
-      channel_id: searchKeyword.channel_id, 
-      mj_id: searchKeyword.mj_id, 
-      start_timestamp: searchKeyword.start_timestamp *1000,
-      end_timestamp: searchKeyword.end_timestamp *1000
+    const params = {
+      p: startIdx,
+      channel_id: searchKeyword.channel_id,
+      mj_id: searchKeyword.mj_id,
+      start_timestamp: searchKeyword.start_timestamp * 1000,
+      end_timestamp: searchKeyword.end_timestamp * 1000,
     };
     if (!userIsAdmin) {
       delete params.channel_id;
     }
-    const res = await API.get(url, { params});
+    const res = await API.get(url, { params });
     const { success, message, data } = res.data;
     if (success) {
       if (startIdx === 0) {
@@ -84,7 +85,10 @@ export default function MjLog() {
   };
 
   const handleSearchKeyword = (event) => {
-    setSearchKeyword({ ...searchKeyword, [event.target.name]: event.target.value });
+    setSearchKeyword({
+      ...searchKeyword,
+      [event.target.name]: event.target.value,
+    });
   };
 
   // 处理刷新
@@ -107,13 +111,15 @@ export default function MjLog() {
     setInitPage(false);
   }, [initPage]);
 
-
-
   return (
     <>
       <Card>
-        <Box component="form" onSubmit={searchLogs} noValidate>
-          <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} userIsAdmin={userIsAdmin} />
+        <Box component='form' onSubmit={searchLogs} noValidate>
+          <TableToolBar
+            filterName={searchKeyword}
+            handleFilterName={handleSearchKeyword}
+            userIsAdmin={userIsAdmin}
+          />
         </Box>
         <Toolbar
           sx={{
@@ -121,47 +127,62 @@ export default function MjLog() {
             height: 50,
             display: 'flex',
             justifyContent: 'space-between',
-            p: (theme) => theme.spacing(0, 1, 0, 3)
+            p: (theme) => theme.spacing(0, 1, 0, 3),
           }}
         >
-          
           <Container>
-            <ButtonGroup variant="outlined" aria-label="outlined small primary button group">
-              <Button onClick={handleRefresh} startIcon={<IconRefresh width={'18px'} />}>
+            <ButtonGroup
+              variant='outlined'
+              aria-label='outlined small primary button group'
+            >
+              <Button
+                onClick={handleRefresh}
+                startIcon={<IconRefresh width={'18px'} />}
+              >
                 重置
               </Button>
 
-              <Button onClick={searchLogs} startIcon={<IconSearch width={'18px'} />}>
+              <Button
+                onClick={searchLogs}
+                startIcon={<IconSearch width={'18px'} />}
+              >
                 搜索
               </Button>
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={goToLogPage}
-                startIcon={<IconFileText width={'18px'} 
-                />}
+                startIcon={<IconFileText width={'18px'} />}
               >
                 日志
               </Button>
-            
             </ButtonGroup>
           </Container>
         </Toolbar>
         {searching && <LinearProgress />}
-        <PerfectScrollbar component="div">
+        <PerfectScrollbar component='div'>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <LogTableHead userIsAdmin={userIsAdmin} />
               <TableBody>
-                {logs.slice(activePage * ITEMS_PER_PAGE, (activePage + 1) * ITEMS_PER_PAGE).map((row, index) => (
-                  <LogTableRow item={row} key={`${row.id}_${index}`} userIsAdmin={userIsAdmin} />
-                ))}
+                {logs
+                  .slice(
+                    activePage * ITEMS_PER_PAGE,
+                    (activePage + 1) * ITEMS_PER_PAGE
+                  )
+                  .map((row, index) => (
+                    <LogTableRow
+                      item={row}
+                      key={`${row.id}_${index}`}
+                      userIsAdmin={userIsAdmin}
+                    />
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
         </PerfectScrollbar>
         <TablePagination
           page={activePage}
-          component="div"
+          component='div'
           count={logs.length + (logs.length % ITEMS_PER_PAGE === 0 ? 1 : 0)}
           rowsPerPage={ITEMS_PER_PAGE}
           onPageChange={onPaginationChange}

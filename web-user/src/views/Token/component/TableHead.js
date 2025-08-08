@@ -1,11 +1,18 @@
 import PropTypes from 'prop-types';
-import { TableCell, TableHead, TableRow,Checkbox } from '@mui/material';
+import { TableCell, TableHead, TableRow, Checkbox } from '@mui/material';
 
-const TokenTableHead = ({ numSelected, rowCount, onSelectAllClick, modelRatioEnabled, billingByRequestEnabled,userGroupEnabled }) => {
+const TokenTableHead = ({
+  numSelected,
+  rowCount,
+  onSelectAllClick,
+  modelRatioEnabled,
+  billingByRequestEnabled,
+  userGroupEnabled,
+}) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell padding='checkbox'>
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
@@ -14,9 +21,7 @@ const TokenTableHead = ({ numSelected, rowCount, onSelectAllClick, modelRatioEna
         </TableCell>
         <TableCell>名称</TableCell>
         <TableCell>状态</TableCell>
-        {userGroupEnabled && (
-          <TableCell>分组</TableCell>
-        )}
+        {userGroupEnabled && <TableCell>分组</TableCell>}
         <TableCell>已用额度</TableCell>
         <TableCell>剩余额度</TableCell>
         <TableCell>创建时间</TableCell>
@@ -36,7 +41,7 @@ TokenTableHead.propTypes = {
   UserGroupEnabled: PropTypes.bool,
   onSelectAllClick: PropTypes.func.isRequired, // 新增 propType
   numSelected: PropTypes.number.isRequired, // 新增 propType
-  rowCount: PropTypes.number.isRequired // 新增 propType
+  rowCount: PropTypes.number.isRequired, // 新增 propType
 };
 
 export default TokenTableHead;

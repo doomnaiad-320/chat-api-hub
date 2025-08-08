@@ -26,14 +26,13 @@ import { LanguageProvider } from 'hooks/useLanguage';
 const App = () => {
   const dispatch = useDispatch();
   const customization = useSelector((state) => state.customization);
-  
+
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     if (storedTheme) {
       dispatch({ type: SET_THEME, theme: storedTheme });
     }
   }, [dispatch]);
-
 
   return (
     <HelmetProvider>
@@ -42,7 +41,11 @@ const App = () => {
           <ThemeProvider theme={themes(customization)}>
             <CssBaseline />
             <NavigationScroll>
-              <SnackbarProvider autoHideDuration={5000} maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+              <SnackbarProvider
+                autoHideDuration={5000}
+                maxSnack={3}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              >
                 <UserProvider>
                   <StatusProvider>
                     <Routes />
