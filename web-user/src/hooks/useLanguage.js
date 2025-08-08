@@ -20,6 +20,7 @@ const translations = {
     // 导航
     'nav.home': '首页',
     'nav.about': '关于',
+    'nav.pricing': '模型定价',
     'nav.login': '登录',
     'nav.register': '注册',
     'nav.dashboard': '控制台',
@@ -92,6 +93,7 @@ const translations = {
     // Navigation
     'nav.home': 'Home',
     'nav.about': 'About',
+    'nav.pricing': 'Model Pricing',
     'nav.login': 'Login',
     'nav.register': 'Register',
     'nav.dashboard': 'Dashboard',
